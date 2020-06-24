@@ -1,8 +1,8 @@
 {
   "name": "san-sdk.js",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "jest src/tests/*",
     "build": "tsc -p ./tsconfig.json && cp -r src/icfs/utils/files/ dist/icfs/utils/files/",
@@ -32,7 +32,8 @@
     "it-to-stream": "^0.1.1",
     "iterable-ndjson": "^1.1.0",
     "merge-options": "^2.0.0",
-    "nanoid": "^3.1.9"
+    "nanoid": "^3.1.9",
+    "san-sdk-test.js": "^0.2.3"
   },
   "devDependencies": {
     "@types/jest": "^25.2.3",
