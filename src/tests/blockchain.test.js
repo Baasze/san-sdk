@@ -64,5 +64,5 @@ describe('ICFS Client', function (){
       expireSeconds: 30,
     });
     console.log(data);
-  }, 10000)
+  }, 30000)
 })
