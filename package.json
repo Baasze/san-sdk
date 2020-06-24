@@ -32,8 +32,7 @@
     "it-to-stream": "^0.1.1",
     "iterable-ndjson": "^1.1.0",
     "merge-options": "^2.0.0",
-    "nanoid": "^3.1.9",
-    "san-sdk-test.js": "^0.2.3"
+    "nanoid": "^3.1.9"
   },
   "devDependencies": {
     "@types/jest": "^25.2.3",
