@@ -2,19 +2,20 @@
  * @Description: 
  * @Author: sandman sandmanhome@hotmail.com
  * @Date: 2020-06-01 16:34:44
- * @LastEditTime: 2020-06-24 15:26:58
+ * @LastEditTime: 2020-06-24 15:45:10
  * @LastEditors: kay
  */
 
 const { Api, JsonRpc, JsSignatureProvider } = require('../../dist');
 const fetch = require('node-fetch');
 const rpc = new JsonRpc('http://121.89.208.188:8888', { fetch });
+const { TextEncoder, TextDecoder } = require('util');  
 
 const creator = 'creatortest1'; // 交易发起账户
 const permission = 'active'; //  交易发起账户权限
 const privateKey = "PVT_SM2_2LnHnaPp9Ktfhiqe9HtuZNP7Nm5ZAKHWGTLnsMq8g2fApC67D5";
 const signatureProvider = new JsSignatureProvider([privateKey]);
-const api = new Api({ rpc, signatureProvider });
+const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() });
 
 describe('ICFS Client', function (){
   var newAccountName = '';

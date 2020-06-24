@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-02 10:39:18
- * @LastEditTime: 2020-06-24 15:14:24
+ * @LastEditTime: 2020-06-24 15:42:00
  * @LastEditors: kay
  */
 
@@ -112,9 +112,23 @@ describe('ICFS Client', function(){
   // icfs key test
   it('key test', async function () {
     // key gen
+    var res = await client.keyList()
+    console.log('key list:', res)
+
     var name = 'mykey1'
-    var res = await client.keyGen(name)
-    console.log('key gen: ', res)
+    var hasName = false
+    for (let i in res) {
+      if (res[i].name == name) {
+        hasName = true
+        break;
+      }
+    }
+    console.log(hasName)
+    if (!hasName) {
+      // key
+      var res = await client.keyGen(name)
+      console.log('key gen: ', res)
+    }
 
     // key list
     res = await client.keyList()
