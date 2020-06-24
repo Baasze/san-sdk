@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: sandman sandmanhome@hotmail.com
  * @Date: 2020-06-01 16:34:44
- * @LastEditTime: 2020-06-04 18:58:00
+ * @LastEditTime: 2020-06-24 15:26:58
  * @LastEditors: kay
  */
 
@@ -63,5 +63,5 @@ describe('ICFS Client', function (){
       expireSeconds: 30,
     });
     console.log(data);
-  })
+  }, 10000)
 })
