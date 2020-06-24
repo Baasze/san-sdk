@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-02 10:39:18
- * @LastEditTime: 2020-06-24 16:10:28
+ * @LastEditTime: 2020-06-24 16:19:27
  * @LastEditors: kay
  */
 
@@ -97,7 +97,8 @@ describe('ICFS Client', function(){
   // icfs pin test
   it('pin test', async function () {
     // pin add
-    var fileCid = await client.addFile('pin test')
+    var date = new Date()
+    var fileCid = await client.addFile(date.toISOString())
     var res = await client.pinAdd(fileCid)
     console.log('pin add: ', res)
  
