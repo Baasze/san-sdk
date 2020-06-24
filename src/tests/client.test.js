@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-02 10:39:18
- * @LastEditTime: 2020-06-23 18:38:08
+ * @LastEditTime: 2020-06-24 15:14:24
  * @LastEditors: kay
  */
 
@@ -17,11 +17,11 @@ const toIterable = require('stream-to-it')
 describe('ICFS Client', function(){
   var client = new IcfsClient('http://icfs.baasze.com:5001', { fetch })
   
-  var dirCid
-  var fileCid
   // icfs add
   it('add test', async function () {
     // 只上传文件内容
+    var dirCid
+    var fileCid
     fileCid = await client.addFile('my test content')
     console.log('fileCid: ', fileCid)
     
@@ -63,6 +63,7 @@ describe('ICFS Client', function(){
   // cat file
   it('cat file test', async function(){
     // cat 返回的是 Buffer
+    var fileCid = 'bafk43jqbecks2cwilkrt4hq5goamjcbvya6pybl7e3kvdcqcs2joqrjxbsz2o'
     for await (const file of client.cat(fileCid)) {
       console.log('cat file content: ', file.toString())
     }
@@ -71,6 +72,7 @@ describe('ICFS Client', function(){
   // icfs get
   it('get file test', async function(){
     let output = './'
+    var dirCid = 'bafym3jqbedssggxrx6t5mfdyiqauxkmknpjkn35u5kgen56dagazblllin6f2'
     for await (const file of client.get(dirCid)){
       const fullFilePath = path.join(output, file.path)
       if (file.content) {
