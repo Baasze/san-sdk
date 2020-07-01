@@ -2,21 +2,21 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-01 10:45:26
- * @LastEditTime: 2020-06-23 18:16:10
+ * @LastEditTime: 2020-07-01 23:00:24
  * @LastEditors: kay
  */
 
 import multipartRequest from './multipart-request'
 import toIterable from './utils/iterator'
-import toCamel from './utils/to-camel'
+// import toCamel from './utils/to-camel'
 import * as Interface from './san-api-interface'
-const Tar = require('it-tar')
-const ndjson = require('iterable-ndjson')
+// const Tar = require('it-tar')
+// const ndjson = require('iterable-ndjson')
 
 export class IcfsClient {
   public endpoint: string;
   public fetchBuiltin:
-      (input?: Request|string, init?: RequestInit) => Promise<Response>;
+      (input?: Request|string, init?: any) => Promise<Response>;
   constructor(
       endpoint: string,
       args: {
@@ -49,11 +49,14 @@ export class IcfsClient {
         headers: options.headers ? options.headers : {},
         body: options.body ? options.body : null,
         method: options.method ? options.method : 'POST',
+        dataType: options.dataType ? options.dataType : 'text',
+        responseType: options.responseType ? options.responseType : 'text',
       });
     } catch (e) {
       e.isFetchError = true;
       throw e;
     }
+    console.log(response)
     if (!response.ok) {
       throw new Error((await response.json()).Message);
     }
@@ -65,65 +68,77 @@ export class IcfsClient {
     yield * toIterable(res.body)
   }
 
-
-  public async* get(cid: string){
-    var res = await this.fetch(`/api/v0/get?arg=${cid}`)
-    var extractor = Tar.extract()
-    for await (const { header, body } of extractor(toIterable(res.body))) {
-      if (header.type === 'directory') {
-        yield {
-          path: header.name
-        }
-      } else {
-        yield {
-          path: header.name,
-          content: body
-        }
-      }
-    }
-  }
-
-  public async* add(input: any){
+  public async add(input: Uint8Array | string | object) {
     var res =  await this.fetch('/api/v0/add?pin=true', {
       ...(
         await multipartRequest(input, null)
       )
     })
-    for await (let file of ndjson(toIterable(res.body))) {
-      yield toCamel(file)
-    }
+    return await res.json() 
+    // console.log(await res.json())
+    // for await (let file of ndjson(toIterable(res.body))) {
+    //   yield toCamel(file)
+    // }
+    // await multipartRequest(input, null)
   }
+  // public async* get(cid: string){
+  //   var res = await this.fetch(`/api/v0/get?arg=${cid}`)
+  //   var extractor = Tar.extract()
+  //   for await (const { header, body } of extractor(toIterable(res.body))) {
+  //     if (header.type === 'directory') {
+  //       yield {
+  //         path: header.name
+  //       }
+  //     } else {
+  //       yield {
+  //         path: header.name,
+  //         content: body
+  //       }
+  //     }
+  //   }
+  // }
 
-  public async addDir(input: object, directory: string) {
-    for await (const data of this.add(input)) {
-      if (data.name == directory) {
-        return data.hash
-      }
-    }
-  }
-  // fileName 等同于 icfs -w
-  public async addFile(input: string | Buffer | Uint8Array, fileName?: string): Promise<string> {
-    var file = {
-      path: fileName? `${fileName}/${fileName}`: '',
-      content: input
-    }
-    if (fileName) {
-      return this.addDir(file, fileName)
-    } else {
-      for await (const data of this.add(file)) {
-        if (data.name == data.hash) {
-          return data.hash
-        }
-      }
-    }
-  }
+  // public async* add(input: any){
+  //   var res =  await this.fetch('/api/v0/add?pin=true', {
+  //     ...(
+  //       await multipartRequest(input, null)
+  //     )
+  //   })
+  //   for await (let file of ndjson(toIterable(res.body))) {
+  //     yield toCamel(file)
+  //   }
+  // }
 
-  public async addUrl(url: string) {
-    var arr: Array<string> = new Array<string>()
-    for await (const file of this.add(this.urlSource(url)))
-      arr.push(file.hash)
-    return arr
-  }
+  // public async addDir(input: object, directory: string) {
+  //   for await (const data of this.add(input)) {
+  //     if (data.name == directory) {
+  //       return data.hash
+  //     }
+  //   }
+  // }
+  // // fileName 等同于 icfs -w
+  // public async addFile(input: string | Buffer | Uint8Array, fileName?: string): Promise<string> {
+  //   var file = {
+  //     path: fileName? `${fileName}/${fileName}`: '',
+  //     content: input
+  //   }
+  //   if (fileName) {
+  //     return this.addDir(file, fileName)
+  //   } else {
+  //     for await (const data of this.add(file)) {
+  //       if (data.name == data.hash) {
+  //         return data.hash
+  //       }
+  //     }
+  //   }
+  // }
+
+  // public async addUrl(url: string) {
+  //   var arr: Array<string> = new Array<string>()
+  //   for await (const file of this.add(this.urlSource(url)))
+  //     arr.push(file.hash)
+  //   return arr
+  // }
   
   public async ls(cid: string): Promise<Interface.LsResult[]>{
     let arr = []
@@ -213,8 +228,8 @@ export class IcfsClient {
   private async dag(option: string, input?: any) {
     const dag = require('./dag')
     switch (option) {
-      case 'put':
-        return dag.put(this, input)
+      // case 'put':
+      //   return dag.put(this, input)
       case 'resolve':
         return dag.resolve(this, input.cid, input.path)
       case 'get':
@@ -224,9 +239,9 @@ export class IcfsClient {
     }
   }
 
-  public async dagPut(input: any): Promise<string> {
-    return this.dag('put', input);
-  }
+  // public async dagPut(input: any): Promise<string> {
+  //   return this.dag('put', input);
+  // }
   public async dagGet(cid: string, path: string): Promise<Interface.dagGetResult> {
     return this.dag('get', {cid: cid, path: path})
   }
