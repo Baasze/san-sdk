@@ -2,12 +2,12 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-22 17:47:47
- * @LastEditTime: 2020-06-22 20:34:25
+ * @LastEditTime: 2020-07-02 18:57:16
  * @LastEditors: kay
  */
 
 import toCamel from './utils/to-camel'
-import toIterable from './utils/iterator'
+import toIterable = require ('./utils/iterator')
 const ndjson = require('iterable-ndjson')
 
 export async function publish(client: any, path: string, options?: { key: string }) {

@@ -1,7 +1,7 @@
 /* eslint-disable */
 
 module.exports = function decodeAsm (stdlib, foreign, buffer) {
-  'use asm'
+  // 'use asm'
 
   // -- Imports
 
