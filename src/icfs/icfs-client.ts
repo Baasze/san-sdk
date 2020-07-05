@@ -2,12 +2,12 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-01 10:45:26
- * @LastEditTime: 2020-07-03 19:21:29
+ * @LastEditTime: 2020-07-05 10:50:07
  * @LastEditors: kay
  */
 
 // import multipartRequest from './multipart-request'
-// let toIterable = require('./utils/iterator')
+import toIterable = require('./utils/iterator')
 // import toCamel from './utils/to-camel'
 import * as Interface from './san-api-interface'
 // const ndjson = require('iterable-ndjson')
@@ -55,7 +55,6 @@ export class IcfsClient {
       e.isFetchError = true;
       throw e;
     }
-    console.log(await response.text())
     if (!response.ok) {
       throw new Error((await response.json()).Message);
     }
@@ -71,38 +70,37 @@ export class IcfsClient {
     return arr
   }
 
-  public async add(input: Uint8Array | string | { path: string, content: Buffer } | { path: string, content: Buffer }[] | AsyncGenerator<{ path: string; content: any; }, void, unknown>, directory: string): Promise<Interface.addResult> {
-    if (directory && typeof input != 'object') {
-      throw Error('add a directory \'input\' must be object.')
+  public async add(input: Uint8Array | string | { path: string, content: Buffer } | { path: string, content: Buffer }[] | AsyncGenerator<{ path: string; content: any; }, void, unknown>, directory?: string): Promise<Interface.addResult> {
+    if (typeof input === 'object' && directory === undefined) {
+      directory = (<{ path: string, content: Buffer }>input).path
     }
     const res = (await import('./add')).add(this, input)
-    if (directory) {
-      for await (const data of res) {
+    var hash 
+    for await (const data of res) {
+      // console.log(data)
+      if (directory) {
         if (data.name == directory) {
-          return data.hash
+          hash = data.hash
+          break
         }
       }
-    } else {
-      for await (const data of res) {
-        if (data.name == data.hash) {
-          return data.hash
-        }
-      }
+      hash = data.hash
+    }
+    return hash
+  }
+
+  public async addUrl(url: string) {
+    return this.add(this.urlSource(url))
+  }
+  
+  async * urlSource(url: string) {
+    const response = await this.fetch(url, { method: 'GET', disableEndpoint: true})
+    yield {
+      path: typeof process === 'object'? decodeURIComponent(new URL(url).pathname.split('/').pop() || '') : (url.split('/').pop() || ''),
+      content: typeof process === 'object'? toIterable(response.body) : response.body
     }
   }
-  // public async add(input: Uint8Array | string | {path: string, content: Buffer} | AsyncGenerator<{path: string;content: any;}, void, unknown>) {
-  //   var res =  await this.fetch('/api/v0/add?pin=true', {
-  //     ...(
-  //       await multipartRequest(input, null)
-  //     )
-  //   })
-  //   return res.json()
-  //   // console.log(await res.json())
-  //   // for await (let file of ndjson(toIterable(res.body))) {
-  //   //   yield toCamel(file)
-  //   // }
-  //   // await multipartRequest(input, null)
-  // }
+
   // public async *get(cid: string){
   //   var res = await this.fetch(`/api/v0/get?arg=${cid}`)
   //   // if (typeof process === 'object') {      
@@ -126,41 +124,6 @@ export class IcfsClient {
   //     // console.log(await res.arrayBuffer())
   //     // console.log(res.headers)
   //   // }
-  // }
-
-  // public async* add(input: any){
-  //   var res =  await this.fetch('/api/v0/add?pin=true', {
-  //     ...(
-  //       await multipartRequest(input, null)
-  //     )
-  //   })
-  //   for await (let file of ndjson(toIterable(res.body))) {
-  //     yield toCamel(file)
-  //   }
-  // }
-
-  // public async addDir(input: object, directory: string) {
-  //   for await (const data of this.add(input)) {
-  //     if (data.name == directory) {
-  //       return data.hash
-  //     }
-  //   }
-  // }
-  // // fileName 等同于 icfs -w
-  // public async addFile(input: string | Buffer | Uint8Array, fileName?: string): Promise<string> {
-  //   var file = {
-  //     path: fileName? `${fileName}/${fileName}`: '',
-  //     content: input
-  //   }
-  //   if (fileName) {
-  //     return this.addDir(file, fileName)
-  //   } else {
-  //     for await (const data of this.add(file)) {
-  //       if (data.name == data.hash) {
-  //         return data.hash
-  //       }
-  //     }
-  //   }
   // }
 
   // ls

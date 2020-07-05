@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-22 09:55:59
- * @LastEditTime: 2020-07-02 21:37:23
+ * @LastEditTime: 2020-07-05 11:46:29
  * @LastEditors: kay
  */
 
@@ -56,15 +56,6 @@ export async function get(client: any, cid: string, path?: string) {
 }
 
 export async function resolve(client: any, cid: string, path?: string) {
-  // var url
-  // if (path) {
-  //   const arg = new URLSearchParams()
-  //   path = ([cid, path].join(path.startsWith('/') ? '' : '/'))
-  //   arg.append('arg', path)
-  //   url = '/api/v0/dag/resolve?' + arg
-  // } else {
-  //   url = `/api/v0/dag/resolve?arg=${cid}`
-  // }
   var url = path? `/api/v0/dag/resolve?arg=${cid}/` + path : `/api/v0/dag/resolve?arg=${cid}`
   const res = await client.fetch(url)
   const data = await res.json()

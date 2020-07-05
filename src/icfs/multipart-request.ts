@@ -2,8 +2,7 @@
 
 const normaliseInput = require('./utils/files/normalise-input')
 const { Readable } = require('readable-stream-miniprogram')
-// const pro = require('./base/readable-stream-miniprogram/pro')
-// const { nanoid } = require('nanoid')
+const {Buffer} = require('buffer')
 import modeToString from './utils/mode-to-string'
 import mtimeToObject from './utils/mtime-to-object'
 const merge = require('merge-options').bind({ ignoreUndefined: true })
@@ -59,13 +58,7 @@ async function multipartRequest(source: any, abortController: any, headers = {},
       yield `\r\n--${boundary}--\r\n`
     }
   }
-  var data = '' 
-  for await (const file of streamFiles(source)) {
-    data += file
-  }
-  // console.log(data.length)
-  // if (typeof process === 'object') {
-    // console.log(Stream)
+  if (typeof process === 'object') {
     var toStream = function (iterable:any) {
       let reading = false
       return new Readable({
@@ -76,7 +69,6 @@ async function multipartRequest(source: any, abortController: any, headers = {},
           try {
             while (true) {
               const { value, done } = await iterable.next(size)
-              // console.log('value:', value)
               if (done) return this.push(null)
               if (!this.push(value)) break
             }
@@ -93,21 +85,31 @@ async function multipartRequest(source: any, abortController: any, headers = {},
       headers: merge(headers, {
         'Content-Type': `multipart/form-data; boundary=${boundary}`
       }),
-      // body: toStream(streamFiles(source))
-      body: data
+      dataType: 'arraybuffer',
+      body: toStream(streamFiles(source))
     }
-  // } else {
-  //   var data = ''
-  //   for await (const file of streamFiles(source)) {
-  //     data += file
-  //   }
-  //   return {
-  //     headers: merge(headers, {
-  //       'Content-Type': `multipart/form-data; boundary=${boundary}`
-  //     }),
-  //     body: data
-  //   }
-  // }
+  } else {
+    var data = []
+    for await (const file of streamFiles(source)) {
+      data.push(Buffer.from(file))
+    }
+    // console.log(new Uint8Array(Buffer.concat(data)).length)
+    return {
+      headers: merge(headers, {
+        'Content-Type': `multipart/form-data; boundary=${boundary}`
+      }),
+      dataType: 'arraybuffer',
+      body: toArrayBuffer(Buffer.concat(data))
+    }
+  }
 }
 
+function toArrayBuffer(myBuf: any) {
+  var myBuffer = new ArrayBuffer(myBuf.length);
+  var res = new Uint8Array(myBuffer);
+  for (var i = 0; i < myBuf.length; ++i) {
+     res[i] = myBuf[i];
+  }
+  return myBuffer;
+}
 export default multipartRequest

@@ -1,30 +1,28 @@
 {
-  "name": "sdk-test.js",
-  "version": "0.2.31",
+  "name": "san-sdk.js",
+  "version": "0.2.3",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "test": "jest src/tests/client.test.js",
+    "test": "jest src/tests/*",
     "build": "tsc -p ./tsconfig.json && cp -r src/icfs/utils/files/ dist/icfs/utils/files/ && cp -r src/icfs/base/ dist/icfs/base/",
     "clean": "rm -rf dist",
     "docs-build": "sh docs/scripts/build.sh"
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "git+https://github.com/Baasze/san-sdk.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": ""
+    "url": "https://github.com/Baasze/san-sdk/issues"
   },
-  "homepage": "",
+  "homepage": "https://github.com/Baasze/san-sdk#readme",
   "dependencies": {
-    "@types/node": "^14.0.10",
     "bignumber.js": "^9.0.0",
     "buffer": "^5.6.0",
-    "cbor": "^5.0.2",
     "class-is": "^1.1.0",
     "icbsc.js": "^1.0.16",
     "is-circular": "^1.0.2",
@@ -37,6 +35,7 @@
   },
   "devDependencies": {
     "@types/jest": "^25.2.3",
+    "@types/node": "^14.0.14",
     "it-pipe": "^1.1.0",
     "jest": "^26.0.1",
     "node-fetch": "^2.6.0",
