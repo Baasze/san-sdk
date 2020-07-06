@@ -2,12 +2,12 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-22 17:47:47
- * @LastEditTime: 2020-06-22 20:34:25
+ * @LastEditTime: 2020-07-06 11:26:54
  * @LastEditors: kay
  */
 
 import toCamel from './utils/to-camel'
-import toIterable from './utils/iterator'
+import toIterable = require ('./utils/iterator')
 const ndjson = require('iterable-ndjson')
 
 export async function publish(client: any, path: string, options?: { key: string }) {
@@ -15,7 +15,6 @@ export async function publish(client: any, path: string, options?: { key: string
   if (options.key) {
     url = url + `&key=${options.key}`
   }
-  // console.log(url)
   const res = await client.fetch(url)
   return toCamel(await res.json())
 }

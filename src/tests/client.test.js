@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-02 10:39:18
- * @LastEditTime: 2020-06-24 16:19:27
+ * @LastEditTime: 2020-07-06 14:13:01
  * @LastEditors: kay
  */
 
@@ -16,28 +16,23 @@ const toIterable = require('stream-to-it')
 
 describe('ICFS Client', function(){
   var client = new IcfsClient('http://icfs.baasze.com:5001', { fetch })
-  
   // icfs add
   it('add test', async function () {
     // 只上传文件内容
     var dirCid
     var fileCid
-    fileCid = await client.addFile('my test content')
+    fileCid = await client.add('my test content')
     console.log('fileCid: ', fileCid)
-    
-    // 上传 url
-    var urlCid = await client.addUrl('http://san.baasze.com')
-    console.log('urlCid: ', urlCid)
     
     // 流形式上传文件
     var streamCid
-    streamCid = await client.addFile(fs.createReadStream(__dirname + '/client.test.js'))
+    streamCid = await client.add(fs.createReadStream(__dirname + '/client.test.js'))
     console.log('streamCid: ', streamCid)
 
     // 上传文件内容及其对应文件名
     var fileWithNameCid
       // addFile(content, filseName)
-    fileWithNameCid = await client.addFile('a', 'a.txt')
+    fileWithNameCid = await client.add({path: 'a.txt', content: 'a'})
     console.log('fileWithNameCid: ', fileWithNameCid)
     
     // 上传具有根目录的文件, 返回根目录的 cid
@@ -56,17 +51,21 @@ describe('ICFS Client', function(){
       // 空目录
       path: `${rootDir}/dir`
     }]
-    dirCid = await client.addDir(files, rootDir)
+    dirCid = await client.add(files, rootDir)
     console.log('dirCid: ', dirCid)
+    
+    // 上传 url
+    var urlCid = await client.addUrl('http://san.baasze.com/doc-md/sdk/javascript/crypto.html#sm2')
+    console.log('urlCid: ', urlCid)
   }, 30000)
 
   // cat file
   it('cat file test', async function(){
     // cat 返回的是 Buffer
-    var fileCid = 'bafk43jqbecks2cwilkrt4hq5goamjcbvya6pybl7e3kvdcqcs2joqrjxbsz2o'
-    for await (const file of client.cat(fileCid)) {
-      console.log('cat file content: ', file.toString())
-    }
+    var fileCid = 'bafk43jqbealhgo5gojbtmxho44abq5fznrul722d4id36sirdpcnzceavivfw'
+    // console.log(fileCid)
+    const res = await client.cat(fileCid)
+    console.log('cat: ', res.toString())
   }, 30000)
   
   // icfs get
@@ -98,15 +97,16 @@ describe('ICFS Client', function(){
   it('pin test', async function () {
     // pin add
     var date = new Date()
-    var fileCid = await client.addFile(date.toISOString())
+    var fileCid = await client.add(date.toISOString())
+    var fileCid = 'bafk43jqbebtels4fzd7wfwc2uzb7xwyzq6zzqc72atkogokd3mch7ug7lnetw'
     var res = await client.pinAdd(fileCid)
     console.log('pin add: ', res)
  
     // pin ls
-    res = await client.pinLs(fileCid)
+    res = await client.pinLs([fileCid, 'bafk43jqbed6spvsvlfe7adazqq5ohzzmbri6q7uailvcmyjqca4tkcakegiew'])
     console.log("pin ls: ", res)
    
-    // pin rm
+    // pin rmr
     res = await client.pinRm(fileCid)
     console.log('pin rm: ', res)
   }, 30000)
@@ -158,12 +158,12 @@ describe('ICFS Client', function(){
     var cid = await client.dagPut(obj)
     console.log('dag put: ', cid)
 
-    // dag resolve
+    //dag resolve
     var res = await client.dagResolve(cid, 'a')
     console.log('dag resolve: ', res)
     
     // dag get
-    res = await client.dagGet(cid, 'c/ca')
+    var res = await client.dagGet('bafy43jqbedmog7g3cijdypqujmfiqa6sjzcxmnhjh5rfqloywznaez734ltyu', 'c/ca')
     console.log('dag get: ', res)
   }, 30000)
 

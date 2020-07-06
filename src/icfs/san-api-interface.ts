@@ -2,9 +2,15 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-23 11:27:00
- * @LastEditTime: 2020-06-23 12:04:02
+ * @LastEditTime: 2020-07-03 11:56:35
  * @LastEditors: kay
  */ 
+
+export interface addResult {
+  Name: string,
+  Hash: string,
+  Size: number
+}
 
 export interface LsResult {
   name: string,

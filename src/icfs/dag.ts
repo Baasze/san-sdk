@@ -2,18 +2,17 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-22 09:55:59
- * @LastEditTime: 2020-06-23 09:50:22
+ * @LastEditTime: 2020-07-05 11:46:29
  * @LastEditors: kay
  */
 
 import multipartRequest from "./multipart-request"
-const dagCBOR = require('ipld-dag-cbor')
-const dagPB = require('ipld-dag-pb')
-const raw = require('ipld-raw')
-
+const dagCBOR = require('./base/ipld-dag-cbor/src/index')
+// const dagPB = require('ipld-dag-pb')
+const raw = require('./base/ipld-raw/src/index')
 const resolvers: any = {
   'dag-cbor': dagCBOR.resolver,
-  'dag-pb': dagPB.resolver,
+  // 'dag-pb': dagPB.resolver,
   raw: raw.resolver
 }
 
@@ -46,7 +45,7 @@ export async function put(client: any, input: any, options?: {format?: string, h
 
 export async function get(client: any, cid: string, path?: string) {
   const resolved = await resolve(client, cid, path)
-  const block = await require('./block').get(client, resolved.cid)
+  const block = await (await import('./block')).get(client, resolved.cid)
   const dagResolver = resolvers[block.cid.codec]
   if (!dagResolver) {
     throw Object.assign(
@@ -57,17 +56,11 @@ export async function get(client: any, cid: string, path?: string) {
 }
 
 export async function resolve(client: any, cid: string, path?: string) {
-  var url
-  if (path) {
-    const arg = new URLSearchParams()
-    path = ([cid, path].join(path.startsWith('/') ? '' : '/'))
-    arg.append('arg', path)
-    url = '/api/v0/dag/resolve?' + arg
-  } else {
-    url = `/api/v0/dag/resolve?arg=${cid}`
-  }
+  var url = path? `/api/v0/dag/resolve?arg=${cid}/` + path : `/api/v0/dag/resolve?arg=${cid}`
   const res = await client.fetch(url)
   const data = await res.json()
 
   return {cid: data.Cid['/'], remPath: data.RemPath }
 }
+
+// module.exports={put, get, resolve} 

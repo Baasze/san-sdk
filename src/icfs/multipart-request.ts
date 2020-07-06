@@ -1,13 +1,13 @@
 'use strict'
 
 const normaliseInput = require('./utils/files/normalise-input')
-const toStream = require('it-to-stream')
-const { nanoid } = require('nanoid')
+const { Readable } = require('readable-stream-miniprogram')
+const {Buffer} = require('buffer')
 import modeToString from './utils/mode-to-string'
 import mtimeToObject from './utils/mtime-to-object'
 const merge = require('merge-options').bind({ ignoreUndefined: true })
 
-async function multipartRequest(source: any, abortController: any, headers = {}, boundary = `-----------------------------${nanoid()}`) {
+async function multipartRequest(source: any, abortController: any, headers = {}, boundary = `-----------------------------${Math.random() * 100000}.${Math.random() * 100000}`) {
   async function* streamFiles(source: any) {
     try {
       let index = 0
@@ -52,17 +52,63 @@ async function multipartRequest(source: any, abortController: any, headers = {},
       }
     } catch (err) {
       // workaround for https://github.com/node-fetch/node-fetch/issues/753
+      console.log(err)
       abortController.abort(err)
     } finally {
       yield `\r\n--${boundary}--\r\n`
     }
   }
-  return {
-    headers: merge(headers, {
-      'Content-Type': `multipart/form-data; boundary=${boundary}`
-    }),
-    body: await toStream.readable(streamFiles(source))
+  if (typeof process === 'object') {
+    var toStream = function (iterable:any) {
+      let reading = false
+      return new Readable({
+        async read (size: any) {
+          if (reading) return
+          reading = true
+    
+          try {
+            while (true) {
+              const { value, done } = await iterable.next(size)
+              if (done) return this.push(null)
+              if (!this.push(value)) break
+            }
+          } catch (err) {
+            this.emit('error', err)
+            if (iterable.return) iterable.return()
+          } finally {
+            reading = false
+          }
+        }
+      })
+    }
+    return {
+      headers: merge(headers, {
+        'Content-Type': `multipart/form-data; boundary=${boundary}`
+      }),
+      dataType: 'arraybuffer',
+      body: toStream(streamFiles(source))
+    }
+  } else {
+    var data = []
+    for await (const file of streamFiles(source)) {
+      data.push(Buffer.from(file))
+    }
+    return {
+      headers: merge(headers, {
+        'Content-Type': `multipart/form-data; boundary=${boundary}`
+      }),
+      dataType: 'arraybuffer',
+      body: toArrayBuffer(Buffer.concat(data))
+    }
   }
 }
 
+function toArrayBuffer(myBuf: any) {
+  var myBuffer = new ArrayBuffer(myBuf.length);
+  var res = new Uint8Array(myBuffer);
+  for (var i = 0; i < myBuf.length; ++i) {
+     res[i] = myBuf[i];
+  }
+  return myBuffer;
+}
 export default multipartRequest

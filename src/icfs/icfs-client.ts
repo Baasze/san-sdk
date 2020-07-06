@@ -2,21 +2,20 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-01 10:45:26
- * @LastEditTime: 2020-06-23 18:16:10
+ * @LastEditTime: 2020-07-06 14:38:59
  * @LastEditors: kay
  */
 
-import multipartRequest from './multipart-request'
-import toIterable from './utils/iterator'
-import toCamel from './utils/to-camel'
+// import multipartRequest from './multipart-request'
+import toIterable = require('./utils/iterator')
+// import toCamel from './utils/to-camel'
 import * as Interface from './san-api-interface'
-const Tar = require('it-tar')
-const ndjson = require('iterable-ndjson')
+// const ndjson = require('iterable-ndjson')
 
 export class IcfsClient {
   public endpoint: string;
   public fetchBuiltin:
-      (input?: Request|string, init?: RequestInit) => Promise<Response>;
+      (input?: Request|string, init?: any) => Promise<Response>;
   constructor(
       endpoint: string,
       args: {
@@ -49,6 +48,8 @@ export class IcfsClient {
         headers: options.headers ? options.headers : {},
         body: options.body ? options.body : null,
         method: options.method ? options.method : 'POST',
+        dataType: options.dataType ? options.dataType : 'text',
+        responseType: options.responseType ? options.responseType : 'text',
       });
     } catch (e) {
       e.isFetchError = true;
@@ -60,228 +61,173 @@ export class IcfsClient {
     return response;
   }
   
-  public async* cat(cid: string){
-    var res = await this.fetch(`/api/v0/cat?arg=${cid}`)
-    yield * toIterable(res.body)
+  public async cat(cid: string): Promise<Buffer[]> {
+    return (await import('./cat')).cat(this, cid)
   }
 
-
-  public async* get(cid: string){
-    var res = await this.fetch(`/api/v0/get?arg=${cid}`)
-    var extractor = Tar.extract()
-    for await (const { header, body } of extractor(toIterable(res.body))) {
-      if (header.type === 'directory') {
-        yield {
-          path: header.name
-        }
-      } else {
-        yield {
-          path: header.name,
-          content: body
+  public async add(input: Uint8Array | string | { path: string, content: Buffer } | { path: string, content: Buffer }[] | AsyncGenerator<{ path: string; content: any; }, void, unknown>, directory?: string): Promise<Interface.addResult> {
+    if (typeof input === 'object' && directory === undefined) {
+      directory = (<{ path: string, content: Buffer }>input).path
+    }
+    const res = (await import('./add')).add(this, input)
+    var hash 
+    for await (const data of res) {
+      if (directory) {
+        if (data.name == directory) {
+          hash = data.hash
+          break
         }
       }
+      hash = data.hash
     }
-  }
-
-  public async* add(input: any){
-    var res =  await this.fetch('/api/v0/add?pin=true', {
-      ...(
-        await multipartRequest(input, null)
-      )
-    })
-    for await (let file of ndjson(toIterable(res.body))) {
-      yield toCamel(file)
-    }
-  }
-
-  public async addDir(input: object, directory: string) {
-    for await (const data of this.add(input)) {
-      if (data.name == directory) {
-        return data.hash
-      }
-    }
-  }
-  // fileName 等同于 icfs -w
-  public async addFile(input: string | Buffer | Uint8Array, fileName?: string): Promise<string> {
-    var file = {
-      path: fileName? `${fileName}/${fileName}`: '',
-      content: input
-    }
-    if (fileName) {
-      return this.addDir(file, fileName)
-    } else {
-      for await (const data of this.add(file)) {
-        if (data.name == data.hash) {
-          return data.hash
-        }
-      }
-    }
+    return hash
   }
 
   public async addUrl(url: string) {
-    var arr: Array<string> = new Array<string>()
-    for await (const file of this.add(this.urlSource(url)))
-      arr.push(file.hash)
-    return arr
+    return this.add(this.urlSource(url))
   }
   
+  async * urlSource(url: string) {
+    const response = await this.fetch(url, { method: 'GET', disableEndpoint: true})
+    yield {
+      path: typeof process === 'object'? decodeURIComponent(new URL(url).pathname.split('/').pop() || '') : (url.split('/').pop() || ''),
+      content: typeof process === 'object'? toIterable(response.body) : response.body
+    }
+  }
+
+  // public async get(cid: string, savePath?: string) {
+  //   const res = (await import('./get')).get(this, cid)
+  //   if (typeof process === 'object' && savePath) {
+  //     const fs = require('fs')
+  //     const path = require('path')
+  //     const pipe = require('it-pipe')
+  //     const { map } = require('streaming-iterables')
+  //     const toIterable = require('stream-to-it')
+  //     for await (const file of res){
+  //       const fullFilePath = path.join(savePath, file.path)
+  //       if (file.content) {
+  //         await fs.promises.mkdir(path.join(savePath, path.dirname(file.path)), { recursive: true })
+  //         await pipe(
+  //           file.content,
+  //           map((chunk: any) => chunk.slice()),
+  //           toIterable.sink(fs.createWriteStream(fullFilePath))
+  //         )
+  //       } else (
+  //         await fs.promises.mkdir(fullFilePath, {recursive: true})
+  //       )
+  //     }
+  //   } else {
+  //     var arr = []
+  //     for await (const file of res) {
+  //       var data = []
+  //       for await (const buf of file.content) {
+  //         // console.log(buf)
+  //         data.push(Buffer.concat(buf._bufs))
+  //       }
+  //       // console.log(data)
+  //       arr.push({path: file.path, content: Buffer.concat(data).toString()})
+  //     }
+  //     return arr
+  //   }
+  // }
+
+  public async *get(cid: string){
+    var res = await this.fetch(`/api/v0/get?arg=${cid}`)
+    if (typeof process === 'object') {
+      const Tar = require('./base/it-tar/index')
+      var extractor = Tar.extract()
+      for await (const { header, body } of extractor(toIterable(res.body))) {
+        if (header.type === 'directory') {
+          yield {
+            path: header.name
+          }
+        } else {
+          yield {
+            path: header.name,
+            content: body
+          }
+        }
+      }
+    } else {
+      var res = await this.fetch(`/api/v0/get?arg=${cid}`, {responseType: 'arraybuffer'})
+      yield await res.arrayBuffer()
+    }
+  }
+
+  // ls
   public async ls(cid: string): Promise<Interface.LsResult[]>{
+    var res = (await import('./ls'))(this, cid)
     let arr = []
-    for await (const file of require('./ls')(this, cid)) {
+    for await (const file of res) {
       arr.push(file)
     }
     return arr
   }
 
-  private async pin(option: string, cid?: string[] | string): Promise<Interface.pinResult[]>{
-    const pin = require('./pin')
-    var arr = []
-    switch (option) {
-      case 'ls':
-        for await (const file of pin.ls(this, cid)) {
-          arr.push(file)
-        }
-        return arr
-      case 'add':
-        return pin.add(this, cid)
-      case 'rm':
-        return pin.rm(this, cid)
-      default:
-        throw new Error("wrong pin option")
-    }
-
-  }
-
+  // pin
   public async pinLs(cid?: string[] | string) {
-    return this.pin('ls', cid);
+    var res = (await import('./pin')).ls(this, cid)
+    var arr = []
+    for await (const file of res) {
+      arr.push(file)
+    }
+    return arr
   }
 
   public async pinAdd(cid?: string[] | string) {
-    return this.pin('add', cid);
+    return (await import('./pin')).add(this, cid)
   }
 
   public async pinRm(cid: string) {
-    return this.pin('rm', cid)
+    return (await import('./pin')).rm(this, cid)
   }
 
-  private async key(option: string, name?: string) : Promise<Interface.keyResult[]>{
-    const key = require('./key')
-    switch (option) {
-      case 'gen':
-        return key.gen(this, name)
-      case 'list':
-        return key.list(this)
-      case 'rm':
-        return key.rm(this, name)
-      default:
-        throw new Error('wrong key option')
-    }
-  }
-  
+  // key
   public async keyGen(name: string) {
-    return this.key('gen', name)
+    return (await import('./key')).gen(this, name)
   }
 
   public async keyList() {
-    return this.key('list')
+    return (await import('./key')).list(this)
   }
   
   public async keyRm(name: string) {
-    return this.key('rm', name)
+    return (await import('./key')).rm(this, name)
   }
 
-  private async swarm(option: string) {
-    const swarm = require('./swarm')
-    switch (option) {
-      case 'peers':
-        return swarm.peers(this)
-      case 'addrs':
-        return swarm.addrs(this)
-      default:
-        throw new Error("wrong swarm option")
-    }
-  }
-
+  // swarm
   public async swarmPeers(): Promise<Interface.swarmPeersResult[]> {
-    return this.swarm('peers')
+    return (await import('./swarm')).peers(this)
   }
 
   public async swarmAddrs(): Promise<Interface.swarmAddrsResult[]> {
-    return this.swarm('addrs')
+    return (await import('./swarm')).addrs(this)
   }
-
-  private async dag(option: string, input?: any) {
-    const dag = require('./dag')
-    switch (option) {
-      case 'put':
-        return dag.put(this, input)
-      case 'resolve':
-        return dag.resolve(this, input.cid, input.path)
-      case 'get':
-        return dag.get(this, input.cid, input.path)
-      default:
-        throw new Error("wrong dag option")
-    }
-  }
-
+  
+  // dag
   public async dagPut(input: any): Promise<string> {
-    return this.dag('put', input);
+    return (await import('./dag')).put(this, input)
   }
   public async dagGet(cid: string, path: string): Promise<Interface.dagGetResult> {
-    return this.dag('get', {cid: cid, path: path})
+    return (await import('./dag')).get(this, cid, path)
   }
   public async dagResolve(cid: string, path?: string): Promise<Interface.dagResolveResult> {
-    return this.dag('resolve', {cid: cid, path: path})
+    return (await import('./dag')).resolve(this, cid, path)
   }
-
-  public async * urlSource(url: string) {
-    const respose = await this.fetch(url, { method: 'GET', disableEndpoint: true })
-    yield {
-      path: decodeURIComponent(new URL(url).pathname.split('/').pop() || ''),
-      content: toIterable(respose.body)
-    }
-    
-  }
-
-  private async block(option: string, input?: any) {
-    const block = require('./block')
-    switch (option) {
-      case 'get':
-        return block.get(this, input)
-      default :
-        throw new Error("wrong block options")
-    }
-  }
-
+  
+  // block
   public async blockGet(cid: string) {
-    return this.block('get', cid)
+    return (await import('./block')).get(this, cid)
   }
 
-  private async name(option: string, input?: any) {
-    const name = require('./name')
-    switch (option) {
-      case 'publish': 
-        return name.publish(this, input.path, { key: input.key })
-      case 'resolve':
-        return name.resolve(this, input)
-      case 'subs':
-        return name.pubsub.subs(this)
-      case 'state':
-        return name.pubsub.state(this)
-      case 'cancel':
-        return name.pubsub.cancel(this, input)
-      default: 
-        throw new Error('wrong name option')
-    }
-  }
-
-  public async namePublish(path: string, key?: string) : Promise <Interface.namePublishResult>{
-    return this.name('publish', {path: path, key: key})
+  // name
+  public async namePublish(path: string, key?: string): Promise<Interface.namePublishResult>{
+    return (await import('./name')).publish(this, path, {key: key})
   }
 
   public async nameResolve(path: string): Promise<{ Path: string }[]> {
     var arr: Array<{ Path: string }> = new Array<{ Path: string }>()
-    let res = await this.name('resolve', path)
+    let res = (await import('./name')).resolve(this, path)
     for await (const path of res) {
       arr.push({Path: path})
     }
@@ -289,39 +235,28 @@ export class IcfsClient {
   }
   
   public async namePubsubSubs(): Promise<string[]> {
-    return this.name('subs')
+    return (await import('./name')).pubsub.subs(this)
   }
 
   public async namePubsubState(): Promise<{ enabled: Boolean }> {
-    return this.name('state')
+    return (await import('./name')).pubsub.state(this)
   }
 
   public async namePubsubCancel(name: string): Promise<{ canceled: Boolean }>{
-    return this.name('cancel', name)
+    return (await import('./name')).pubsub.cancel(this, name)
   }
 
-  private async bootstrap(option: string, peer?: string): Promise<{Peers: string[]}> {
-    const bootstrap = require('./bootstrap')
-    switch (option) {
-      case 'list':
-        return bootstrap.list(this);
-      case 'add':
-        return bootstrap.add(this, peer);
-      case 'rm':
-        return bootstrap.rm(this, peer)
-    }
+  // boootstrap
+  public async bootstrapList() {
+    return (await import('./bootstrap')).list(this)
   }
 
-  public async bootstrapList(){
-    return this.bootstrap('list')
+  public async bootstrapAdd(peer: string) {
+    return (await import('./bootstrap')).add(this, peer)
   }
 
-  public async bootstrapAdd(peer: string){
-    return this.bootstrap('add', peer)
-  }
-
-  public async bootstrapRm(peer: string){
-    return this.bootstrap('rm', peer)
+  public async bootstrapRm(peer: string) {
+    return (await import('./bootstrap')).rm(this, peer)
   }
 }
 

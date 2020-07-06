@@ -60,7 +60,7 @@ san-sdk Javascript SDK 提供了一整套对 区块链、分布式存储 进行�
 
 .. code:: bash
 
-   yarn add san-sdk
+   yarn add san-sdk.js
 
 接口说明
 ----------
