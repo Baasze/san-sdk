@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-02 10:39:18
- * @LastEditTime: 2020-07-05 11:33:20
+ * @LastEditTime: 2020-07-06 14:13:01
  * @LastEditors: kay
  */
 
@@ -65,27 +65,27 @@ describe('ICFS Client', function(){
     var fileCid = 'bafk43jqbealhgo5gojbtmxho44abq5fznrul722d4id36sirdpcnzceavivfw'
     // console.log(fileCid)
     const res = await client.cat(fileCid)
-    console.log(Buffer.concat(res).toString())
+    console.log('cat: ', res.toString())
   }, 30000)
   
   // icfs get
-  // it('get file test', async function(){
-  //   let output = './'
-  //   var dirCid = 'bafym3jqbedssggxrx6t5mfdyiqauxkmknpjkn35u5kgen56dagazblllin6f2'
-  //   for await (const file of client.get(dirCid)){
-  //     const fullFilePath = path.join(output, file.path)
-  //     if (file.content) {
-  //       await fs.promises.mkdir(path.join(output, path.dirname(file.path)), { recursive: true })
-  //       await pipe(
-  //         file.content,
-  //         map((chunk) => chunk.slice()),
-  //         toIterable.sink(fs.createWriteStream(fullFilePath))
-  //       )
-  //     } else (
-  //       await fs.promises.mkdir(fullFilePath, {recursive: true})
-  //     )
-  //   }
-  // }, 30000)
+  it('get file test', async function(){
+    let output = './'
+    var dirCid = 'bafym3jqbedssggxrx6t5mfdyiqauxkmknpjkn35u5kgen56dagazblllin6f2'
+    for await (const file of client.get(dirCid)){
+      const fullFilePath = path.join(output, file.path)
+      if (file.content) {
+        await fs.promises.mkdir(path.join(output, path.dirname(file.path)), { recursive: true })
+        await pipe(
+          file.content,
+          map((chunk) => chunk.slice()),
+          toIterable.sink(fs.createWriteStream(fullFilePath))
+        )
+      } else (
+        await fs.promises.mkdir(fullFilePath, {recursive: true})
+      )
+    }
+  }, 30000)
 
   // icfs ls test
   it('ls files test', async function () {
@@ -168,11 +168,11 @@ describe('ICFS Client', function(){
   }, 30000)
 
   // icfs block test
-  // it('block test', async function () {
-  //   // block get
-  //   var res = await client.blockGet('bafym3jqbedlgf7pqw6ednj4spj4yv2tgmqoeiwjfkr726gbj4tzssvn3rqqk4')
-  //   console.log('block get: ', res);
-  // }, 30000)
+  it('block test', async function () {
+    // block get
+    var res = await client.blockGet('bafym3jqbedlgf7pqw6ednj4spj4yv2tgmqoeiwjfkr726gbj4tzssvn3rqqk4')
+    console.log('block get: ', res);
+  }, 30000)
   
   // icfs name test
   it('name test', async function () {

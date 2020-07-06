@@ -93,7 +93,6 @@ async function multipartRequest(source: any, abortController: any, headers = {},
     for await (const file of streamFiles(source)) {
       data.push(Buffer.from(file))
     }
-    // console.log(new Uint8Array(Buffer.concat(data)).length)
     return {
       headers: merge(headers, {
         'Content-Type': `multipart/form-data; boundary=${boundary}`

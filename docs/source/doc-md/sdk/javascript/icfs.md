@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: sandman sandmanhome@hotmail.com
  * @Date: 2020-06-01 11:27:41
- * @LastEditTime: 2020-06-23 18:50:06
+ * @LastEditTime: 2020-07-06 14:16:09
  * @LastEditors: kay
 --> 
 
@@ -12,8 +12,9 @@
 
 ```js
 const { IcfsClient } = require('san-sdk.js');
+// 微信小程序 fetch 使用 icbsc-fetch.js
 const fetch = require('node-fetch');
-const client = new IcfsClient('http://127.0.0.1:5001', {fetch});
+const client = new IcfsClient('http://icfs.baasze.com:5001', {fetch});
 ```
 
 ## add
@@ -27,11 +28,11 @@ const client = new IcfsClient('http://127.0.0.1:5001', {fetch});
 ```js
 const { IcfsClient } = require('san-sdk.js');
 const fetch = require('node-fetch');
-const client = new IcfsClient('http://127.0.0.1:5001', {fetch});
+const client = new IcfsClient('http://icfs:baasze.com:5001', {fetch});
 
 (async () => {
   let content = 'my test file.';
-  let result = await client.addFile(content);
+  let result = await client.add(content);
   console.log(result)
 })();
 ```
@@ -41,11 +42,11 @@ const client = new IcfsClient('http://127.0.0.1:5001', {fetch});
 ```js
 const { IcfsClient } = require('san-sdk.js');
 const fetch = require('node-fetch');
-const client = new IcfsClient('http://127.0.0.1:5001', {fetch});
+const client = new IcfsClient('http://icfs.baasze.com:5001', {fetch});
 const fs = require('fs');
 
 (async () => {
-  let result = await client.addFile(fs.createReadStream(__dirname + '/client.test.js'));
+  let result = await client.add(fs.createReadStream(__dirname + '/client.test.js'));
   console.log(result);
 })();
 ``` 
@@ -55,7 +56,7 @@ const fs = require('fs');
 ```js
 const { IcfsClient } = require('san-sdk.js');
 const fetch = require('node-fetch');
-const client = new IcfsClient('http://127.0.0.1:5001', {fetch});
+const client = new IcfsClient('http://icfs.baasze.com:5001', {fetch});
 
 let rootDir = 'test';
 let files = [{
@@ -71,7 +72,7 @@ let files = [{
 }];
 
 (async () => {
-  let dirCid = await client.addDir(files, rootDir);
+  let dirCid = await client.add(files, rootDir);
   console.log('dirCid: ', dirCid);
 })()
 ```
@@ -81,8 +82,7 @@ let files = [{
 ```js
 const { IcfsClient } = require('san-sdk.js');
 const fetch = require('node-fetch');
-const client = new IcfsClient('http://127.0.0.1:5001', {fetch});
-const fs = require('fs');
+const client = new IcfsClient('http://icfs.baasze.com:5001', {fetch});
 (async () => {
   var urlCid = await client.addUrl('http://san.baasze.com')
   console.log('urlCid: ', urlCid)
@@ -99,7 +99,7 @@ bafk43jqbec3jogyafk5hilvedlekzsnkmhvfh5etcromha6kn3zetetenss3q
 
 ## get
 
-get 返回的结果是异步迭代器
+get 返回的结果是异步迭代器, get 目前只支持 node 端的使用
 
 ```js
   const { map } = require('streaming-iterables');
@@ -110,7 +110,7 @@ get 返回的结果是异步迭代器
   const toIterable = require('stream-to-it');
   const { IpfsClient }  = require('san-sdk.js');
 
-  const client = new IpfsClient('http://127.0.0.1:5001', { fetch });
+  const client = new IpfsClient('http://icfs.baasze.com:5001', { fetch });
   let output = './';
   // 流形式 get 并存储于指定路径
   (async () => {
@@ -137,12 +137,12 @@ cat 返回的结果是异步迭代器
 ```js
 const { IcfsClient } = require('san-sdk.js');
 const fetch = require('node-fetch');
-const client = new IcfsClient('http://127.0.0.1:5001', {fetch});
+const client = new IcfsClient('http://icfs.baasze.com:5001', {fetch});
 
 (async () => {
-  for await (const file of client.cat(cid)) {
-    console.log('cat file content: ', file)
-  }
+  var fileCid = 'bafk43jqbealhgo5gojbtmxho44abq5fznrul722d4id36sirdpcnzceavivfw'
+  const res = await client.cat(fileCid)
+  console.log('cat: ', res.toString())
 })();
 ```
 
@@ -151,7 +151,7 @@ const client = new IcfsClient('http://127.0.0.1:5001', {fetch});
 ```js
 const { IcfsClient } = require('san-sdk.js');
 const fetch = require('node-fetch');
-const client = new IcfsClient('http://127.0.0.1:5001', {fetch});
+const client = new IcfsClient('http://icfs.baasze.com:5001', {fetch});
 
 (async()=>{
   var res = await client.ls("bafym3jqbedlgf7pqw6ednj4spj4yv2tgmqoeiwjfkr726gbj4tzssvn3rqqk4");

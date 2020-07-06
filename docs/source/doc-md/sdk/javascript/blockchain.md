@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: sandman sandmanhome@hotmail.com
  * @Date: 2020-06-01 11:27:41
- * @LastEditTime: 2020-06-05 18:35:02
+ * @LastEditTime: 2020-07-06 12:07:07
  * @LastEditors: kay
 --> 
 
@@ -19,6 +19,7 @@ const creator = 'creatortest1'; // 交易发起账户
 const permission = 'active'; // 交易发起账户权限
 const privateKey = "PVT_SM2_2LnHnaPp9Ktfhiqe9HtuZNP7Nm5ZAKHWGTLnsMq8g2fApC67D5"; // 交易发起账户私钥
 const signatureProvider = new JsSignatureProvider([privateKey]);
+// 可以不需要 textEncode、textDecode 但需要高版本 node
 const api = new Api({ rpc, signatureProvider });
 ```
 

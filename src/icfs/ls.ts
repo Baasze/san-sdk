@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-18 18:04:07
- * @LastEditTime: 2020-07-02 21:35:26
+ * @LastEditTime: 2020-07-06 11:26:44
  * @LastEditors: kay
  */ 
 
@@ -32,7 +32,6 @@ export = async function* lsStream(client: any, cid: string) {
   }
 
   for (const link of result) {
-    // console.log(typeOf())
     const entry = {
       name: link.Name,
       hash: link.Hash,

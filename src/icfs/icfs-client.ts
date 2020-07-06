@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-01 10:45:26
- * @LastEditTime: 2020-07-05 10:50:07
+ * @LastEditTime: 2020-07-06 14:38:59
  * @LastEditors: kay
  */
 
@@ -61,13 +61,8 @@ export class IcfsClient {
     return response;
   }
   
-  public async cat(cid: string): Promise <Buffer[]> {
-    const res = (await import('./cat')).cat(this, cid)
-    var arr = []
-    for await (const file of res) {
-      arr.push(file)
-    }
-    return arr
+  public async cat(cid: string): Promise<Buffer[]> {
+    return (await import('./cat')).cat(this, cid)
   }
 
   public async add(input: Uint8Array | string | { path: string, content: Buffer } | { path: string, content: Buffer }[] | AsyncGenerator<{ path: string; content: any; }, void, unknown>, directory?: string): Promise<Interface.addResult> {
@@ -77,7 +72,6 @@ export class IcfsClient {
     const res = (await import('./add')).add(this, input)
     var hash 
     for await (const data of res) {
-      // console.log(data)
       if (directory) {
         if (data.name == directory) {
           hash = data.hash
@@ -101,30 +95,64 @@ export class IcfsClient {
     }
   }
 
-  // public async *get(cid: string){
-  //   var res = await this.fetch(`/api/v0/get?arg=${cid}`)
-  //   // if (typeof process === 'object') {      
-  //     const Tar = require('./base/it-tar/index')
-  //     var extractor = Tar.extract()
-  //     for await (const { header, body } of extractor(toIterable(res.body))) {
-  //       if (header.type === 'directory') {
-  //         yield {
-  //           path: header.name
-  //         }
-  //       } else {
-  //         yield {
-  //           path: header.name,
-  //           content: body
-  //         }
-  //       }
+  // public async get(cid: string, savePath?: string) {
+  //   const res = (await import('./get')).get(this, cid)
+  //   if (typeof process === 'object' && savePath) {
+  //     const fs = require('fs')
+  //     const path = require('path')
+  //     const pipe = require('it-pipe')
+  //     const { map } = require('streaming-iterables')
+  //     const toIterable = require('stream-to-it')
+  //     for await (const file of res){
+  //       const fullFilePath = path.join(savePath, file.path)
+  //       if (file.content) {
+  //         await fs.promises.mkdir(path.join(savePath, path.dirname(file.path)), { recursive: true })
+  //         await pipe(
+  //           file.content,
+  //           map((chunk: any) => chunk.slice()),
+  //           toIterable.sink(fs.createWriteStream(fullFilePath))
+  //         )
+  //       } else (
+  //         await fs.promises.mkdir(fullFilePath, {recursive: true})
+  //       )
   //     }
-  //   // } else {
-  //     // var res = await this.fetch(`/api/v0/get?arg=${cid}`)
-  //     // console.log(res.headers)
-  //     // console.log(await res.arrayBuffer())
-  //     // console.log(res.headers)
-  //   // }
+  //   } else {
+  //     var arr = []
+  //     for await (const file of res) {
+  //       var data = []
+  //       for await (const buf of file.content) {
+  //         // console.log(buf)
+  //         data.push(Buffer.concat(buf._bufs))
+  //       }
+  //       // console.log(data)
+  //       arr.push({path: file.path, content: Buffer.concat(data).toString()})
+  //     }
+  //     return arr
+  //   }
   // }
+
+  public async *get(cid: string){
+    var res = await this.fetch(`/api/v0/get?arg=${cid}`)
+    if (typeof process === 'object') {
+      const Tar = require('./base/it-tar/index')
+      var extractor = Tar.extract()
+      for await (const { header, body } of extractor(toIterable(res.body))) {
+        if (header.type === 'directory') {
+          yield {
+            path: header.name
+          }
+        } else {
+          yield {
+            path: header.name,
+            content: body
+          }
+        }
+      }
+    } else {
+      var res = await this.fetch(`/api/v0/get?arg=${cid}`, {responseType: 'arraybuffer'})
+      yield await res.arrayBuffer()
+    }
+  }
 
   // ls
   public async ls(cid: string): Promise<Interface.LsResult[]>{

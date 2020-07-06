@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-22 17:47:47
- * @LastEditTime: 2020-07-02 18:57:16
+ * @LastEditTime: 2020-07-06 11:26:54
  * @LastEditors: kay
  */
 
@@ -15,7 +15,6 @@ export async function publish(client: any, path: string, options?: { key: string
   if (options.key) {
     url = url + `&key=${options.key}`
   }
-  // console.log(url)
   const res = await client.fetch(url)
   return toCamel(await res.json())
 }
