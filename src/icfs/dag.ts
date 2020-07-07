@@ -2,11 +2,12 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-22 09:55:59
- * @LastEditTime: 2020-07-05 11:46:29
- * @LastEditors: kay
+ * @LastEditTime: 2020-07-07 18:59:19
+ * @LastEditors: sandman
  */
 
 import multipartRequest from "./multipart-request"
+const CID = require('../icfs/base/cids/src/index.js')
 const dagCBOR = require('./base/ipld-dag-cbor/src/index')
 // const dagPB = require('ipld-dag-pb')
 const raw = require('./base/ipld-raw/src/index')
@@ -27,7 +28,11 @@ export async function put(client: any, input: any, options?: {format?: string, h
   var serialize
 
   if (options.format === 'dag-cbor') {
-    serialize = dagCBOR.util.serialize(input)
+    var obj = convertToCborIshObj(input)
+    if (obj.error != null) {
+      throw new Error(obj.error) 
+    }
+    serialize = dagCBOR.util.serialize(obj.obj)
   } else if (options.format == 'dag-pb') {
     serialize = input.serialize()
   } else {
@@ -61,6 +66,47 @@ export async function resolve(client: any, cid: string, path?: string) {
   const data = await res.json()
 
   return {cid: data.Cid['/'], remPath: data.RemPath }
+}
+
+function convertToCborIshObj(input: any) :any {
+  if (Array.isArray(input)) {
+    var out = []
+    for(var i = 0, len = input.length; i < len; i++) {
+      var res = convertToCborIshObj(input[i])
+      if (res.error != null) {
+        return { 'obj': null, 'error': res.error}
+      }
+
+      out.push(res.obj)
+    }
+    return { 'obj': out, 'error': null} 
+  } else if (typeof input === 'object') {
+    if (Object.keys(input).length == 0) {
+      return { 'obj': input, 'error': null}
+    }
+
+    if (input.hasOwnProperty('/') && Object.keys(input).length == 1) {
+      var value = input['/']
+      if (typeof value != 'string') {
+        return { 'obj': null, 'error': 'links not string'} 
+      }
+      
+      return { 'obj': new CID(value), 'error': null}
+    }
+
+    for(let key in input){
+      var res = convertToCborIshObj(input[key])
+      if (res.error != null) {
+        return res
+      }
+
+      input[key] = res.obj
+    }
+
+    return { 'obj': input, 'error': null}
+  } else {
+    return { 'obj': input, 'error': null}
+  }
 }
 
 // module.exports={put, get, resolve} 
