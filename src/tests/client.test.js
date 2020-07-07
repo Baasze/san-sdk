@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-02 10:39:18
- * @LastEditTime: 2020-07-06 14:13:01
+ * @LastEditTime: 2020-07-07 10:04:51
  * @LastEditors: kay
  */
 
@@ -69,10 +69,12 @@ describe('ICFS Client', function(){
   }, 30000)
   
   // icfs get
-  it('get file test', async function(){
+  it('get file test', async function () {
+    // save file local
     let output = './'
     var dirCid = 'bafym3jqbedssggxrx6t5mfdyiqauxkmknpjkn35u5kgen56dagazblllin6f2'
-    for await (const file of client.get(dirCid)){
+    // option default : {save: false}
+    for await (const file of await client.get(dirCid, {save: true})){
       const fullFilePath = path.join(output, file.path)
       if (file.content) {
         await fs.promises.mkdir(path.join(output, path.dirname(file.path)), { recursive: true })
@@ -85,6 +87,12 @@ describe('ICFS Client', function(){
         await fs.promises.mkdir(fullFilePath, {recursive: true})
       )
     }
+
+    // return {path: cid, content: BufferList}
+    var fileCid = 'bafk43jqbeclzwhefsazzgyyjvch2osvxxg5h42ftwg66hhyx2r2qbkwgzy5ue'
+    var res = await client.get(fileCid)
+    console.log(res)
+
   }, 30000)
 
   // icfs ls test
@@ -157,6 +165,9 @@ describe('ICFS Client', function(){
     // dag put
     var cid = await client.dagPut(obj)
     console.log('dag put: ', cid)
+
+    var urlCid = await client.dagPutUrl('https://w3c-ccg.github.io/did-spec/contexts/did-v1.jsonld')
+    console.log('dag put url: ', urlCid)
 
     //dag resolve
     var res = await client.dagResolve(cid, 'a')
