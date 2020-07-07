@@ -2,25 +2,22 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-01 10:45:26
- * @LastEditTime: 2020-07-06 14:38:59
+ * @LastEditTime: 2020-07-07 10:02:42
  * @LastEditors: kay
  */
 
-// import multipartRequest from './multipart-request'
 import toIterable = require('./utils/iterator')
-// import toCamel from './utils/to-camel'
 import * as Interface from './san-api-interface'
-// const ndjson = require('iterable-ndjson')
 
 export class IcfsClient {
   public endpoint: string;
   public fetchBuiltin:
-      (input?: Request|string, init?: any) => Promise<Response>;
+      (input?: Request|string, init?: any) => Promise<any>;
   constructor(
       endpoint: string,
       args: {
         fetch?: (input?: string|Request,
-                 init?: RequestInit) => Promise<Response>
+                 init?: RequestInit) => Promise<any>
       } = {},
   ) {
     this.endpoint = endpoint.replace(/\/$/, '');
@@ -61,10 +58,12 @@ export class IcfsClient {
     return response;
   }
   
+  // cat
   public async cat(cid: string): Promise<Buffer[]> {
     return (await import('./cat')).cat(this, cid)
   }
 
+  // add
   public async add(input: Uint8Array | string | { path: string, content: Buffer } | { path: string, content: Buffer }[] | AsyncGenerator<{ path: string; content: any; }, void, unknown>, directory?: string): Promise<Interface.addResult> {
     if (typeof input === 'object' && directory === undefined) {
       directory = (<{ path: string, content: Buffer }>input).path
@@ -95,62 +94,23 @@ export class IcfsClient {
     }
   }
 
-  // public async get(cid: string, savePath?: string) {
-  //   const res = (await import('./get')).get(this, cid)
-  //   if (typeof process === 'object' && savePath) {
-  //     const fs = require('fs')
-  //     const path = require('path')
-  //     const pipe = require('it-pipe')
-  //     const { map } = require('streaming-iterables')
-  //     const toIterable = require('stream-to-it')
-  //     for await (const file of res){
-  //       const fullFilePath = path.join(savePath, file.path)
-  //       if (file.content) {
-  //         await fs.promises.mkdir(path.join(savePath, path.dirname(file.path)), { recursive: true })
-  //         await pipe(
-  //           file.content,
-  //           map((chunk: any) => chunk.slice()),
-  //           toIterable.sink(fs.createWriteStream(fullFilePath))
-  //         )
-  //       } else (
-  //         await fs.promises.mkdir(fullFilePath, {recursive: true})
-  //       )
-  //     }
-  //   } else {
-  //     var arr = []
-  //     for await (const file of res) {
-  //       var data = []
-  //       for await (const buf of file.content) {
-  //         // console.log(buf)
-  //         data.push(Buffer.concat(buf._bufs))
-  //       }
-  //       // console.log(data)
-  //       arr.push({path: file.path, content: Buffer.concat(data).toString()})
-  //     }
-  //     return arr
-  //   }
-  // }
-
-  public async *get(cid: string){
-    var res = await this.fetch(`/api/v0/get?arg=${cid}`)
-    if (typeof process === 'object') {
-      const Tar = require('./base/it-tar/index')
-      var extractor = Tar.extract()
-      for await (const { header, body } of extractor(toIterable(res.body))) {
-        if (header.type === 'directory') {
-          yield {
-            path: header.name
+  // get
+  public async get(cid: string, option?: { save?: Boolean }){
+    const res = (await import('./get')).get(this, cid)
+    if (option && option.save) {
+      return res
+    } else {
+      var arr = []
+      for await (const file of res) {
+        if (file.content) {
+          for await (const content of file.content) {
+            arr.push({ path: file.path, content: content })
           }
         } else {
-          yield {
-            path: header.name,
-            content: body
-          }
+          arr.push(file)
         }
       }
-    } else {
-      var res = await this.fetch(`/api/v0/get?arg=${cid}`, {responseType: 'arraybuffer'})
-      yield await res.arrayBuffer()
+      return arr
     }
   }
 
@@ -208,6 +168,11 @@ export class IcfsClient {
   public async dagPut(input: any): Promise<string> {
     return (await import('./dag')).put(this, input)
   }
+  public async dagPutUrl(url: string) {
+    const response = await this.fetch(url, { method: 'GET', disableEndpoint: true })
+    return (await import('./dag')).put(this, await response.json())
+  }
+
   public async dagGet(cid: string, path: string): Promise<Interface.dagGetResult> {
     return (await import('./dag')).get(this, cid, path)
   }

@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: sandman sandmanhome@hotmail.com
  * @Date: 2020-06-01 11:27:41
- * @LastEditTime: 2020-07-06 14:16:09
+ * @LastEditTime: 2020-07-07 10:10:37
  * @LastEditors: kay
 --> 
 
@@ -99,8 +99,6 @@ bafk43jqbec3jogyafk5hilvedlekzsnkmhvfh5etcromha6kn3zetetenss3q
 
 ## get
 
-get 返回的结果是异步迭代器, get 目前只支持 node 端的使用
-
 ```js
   const { map } = require('streaming-iterables');
   const path = require('path');
@@ -114,7 +112,8 @@ get 返回的结果是异步迭代器, get 目前只支持 node 端的使用
   let output = './';
   // 流形式 get 并存储于指定路径
   (async () => {
-    for await (const file of client.get(cid)){
+    // option default : {save: false}
+    for await (const file of client.get(cid, {save: true})){
       const fullFilePath = path.join(output, file.path)
       if (file.content) {
         await fs.promises.mkdir(path.join(output, path.dirname(file.path)), { recursive: true })
@@ -127,12 +126,17 @@ get 返回的结果是异步迭代器, get 目前只支持 node 端的使用
         await fs.promises.mkdir(fullFilePath, {recursive: true})
       )
     }
+
+    // return {path: cid, content: BufferList}
+    var fileCid = 'bafk43jqbeclzwhefsazzgyyjvch2osvxxg5h42ftwg66hhyx2r2qbkwgzy5ue'
+    var res = await client.get(fileCid)
+    console.log(res)
   })();
 ```
 
 ## cat
 
-cat 返回的结果是异步迭代器
+cat 返回的结果 buffer
 
 ```js
 const { IcfsClient } = require('san-sdk.js');
@@ -462,6 +466,31 @@ respose:
 `dagGetResult`: 
 - `value`: dag get 获取的值
 - `remainderPath`: 节点无法解析路径的其余部分
+
+4. dag put url
+
+Parameters:
+
+名称 | 类型 | 说明 | 备注
+:-: | :-: | :-: | :-:
+dagNode| Object | 遵循 IPLD 格式之一的 DAG 节点
+
+```js
+// dag put url
+var url = 'https://w3c-ccg.github.io/did-spec/contexts/did-v1.jsonld'
+var cid = await client.dagPut(url)
+console.log('dag put url: ', cid)
+```
+
+response :
+
+```
+bafy43jqbedcfikcertnxzdkg2zlnpnfh2747nhkaukdr236cffboyfxu3u7zi
+```
+
+类型 | 说明 | 备注
+:-: | :-: | :-:
+`Promise<string>`| cid |
 
 ## name
 
