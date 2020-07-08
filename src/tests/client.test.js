@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-02 10:39:18
- * @LastEditTime: 2020-07-07 22:42:28
+ * @LastEditTime: 2020-07-08 11:04:06
  * @LastEditors: kay
  */
 
@@ -106,7 +106,6 @@ describe('ICFS Client', function(){
     // pin add
     var date = new Date()
     var fileCid = await client.add(date.toISOString())
-    var fileCid = 'bafk43jqbebtels4fzd7wfwc2uzb7xwyzq6zzqc72atkogokd3mch7ug7lnetw'
     var res = await client.pinAdd(fileCid)
     console.log('pin add: ', res)
  
@@ -114,7 +113,7 @@ describe('ICFS Client', function(){
     res = await client.pinLs([fileCid, 'bafk43jqbed6spvsvlfe7adazqq5ohzzmbri6q7uailvcmyjqca4tkcakegiew'])
     console.log("pin ls: ", res)
    
-    // pin rmr
+    // pin rm
     res = await client.pinRm(fileCid)
     console.log('pin rm: ', res)
   }, 30000)
