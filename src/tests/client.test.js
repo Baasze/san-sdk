@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-02 10:39:18
- * @LastEditTime: 2020-07-07 10:04:51
+ * @LastEditTime: 2020-07-07 22:42:28
  * @LastEditors: kay
  */
 
@@ -155,16 +155,23 @@ describe('ICFS Client', function(){
   // icfs dag test
   it('dag test', async function () {
     var obj = {
+      z: 'icfs'
+    }
+    // dag put input 类型 object, string
+    var cid = await client.dagPut(obj)
+    console.log('dag put obj: ', cid)
+
+    var obj1 = {
       a: 1,
       b: [1, 2, 3],
       c: {
         ca: [5, 6, 7],
-        cb: 'foo'
+        cb: {'/': cid} // cb 关联到 obj 对象
       }
     }
-    // dag put
-    var cid = await client.dagPut(obj)
-    console.log('dag put: ', cid)
+    // dag put obj1 带 links 到 obj 对象
+    cid = await client.dagPut(obj1)
+    console.log('dag put obj1: ', cid)
 
     var urlCid = await client.dagPutUrl('https://w3c-ccg.github.io/did-spec/contexts/did-v1.jsonld')
     console.log('dag put url: ', urlCid)
@@ -174,8 +181,12 @@ describe('ICFS Client', function(){
     console.log('dag resolve: ', res)
     
     // dag get
-    var res = await client.dagGet('bafy43jqbedmog7g3cijdypqujmfiqa6sjzcxmnhjh5rfqloywznaez734ltyu', 'c/ca')
-    console.log('dag get: ', res)
+    res = await client.dagGet(cid, 'c/ca')
+    console.log('dag get "obj1.c.ca": ', res)
+
+    // dag get links cid of obj
+    res = await client.dagGet(cid, 'c/cb')
+    console.log('dag get "obj": ', res)
   }, 30000)
 
   // icfs block test

@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-01 10:45:26
- * @LastEditTime: 2020-07-07 10:02:42
+ * @LastEditTime: 2020-07-07 22:47:45
  * @LastEditors: kay
  */
 
@@ -165,7 +165,7 @@ export class IcfsClient {
   }
   
   // dag
-  public async dagPut(input: any): Promise<string> {
+  public async dagPut(input: object | string): Promise<string> {
     return (await import('./dag')).put(this, input)
   }
   public async dagPutUrl(url: string) {
@@ -224,4 +224,3 @@ export class IcfsClient {
     return (await import('./bootstrap')).rm(this, peer)
   }
 }
-

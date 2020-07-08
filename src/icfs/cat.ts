@@ -17,4 +17,3 @@ export async function cat(client: any, cid: string) {
   }
   return Buffer.concat(chunks)
 }
-

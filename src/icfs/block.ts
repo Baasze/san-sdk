@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-22 10:00:44
- * @LastEditTime: 2020-07-01 10:22:44
+ * @LastEditTime: 2020-07-07 22:49:12
  * @LastEditors: kay
  */ 
 const Block = require('./base/ipld-block/index')
@@ -13,4 +13,4 @@ export async function get(client: any, cid: string) {
   const res = await client.fetch(`/api/v0/block/get?arg=${cid}`, {responseType: 'arraybuffer'})
   var Cid = new CID(cid)
   return new Block(Buffer.from(await res.arrayBuffer()), Cid)
-}                             
+}

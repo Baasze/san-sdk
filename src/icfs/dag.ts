@@ -2,8 +2,8 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-22 09:55:59
- * @LastEditTime: 2020-07-07 18:59:19
- * @LastEditors: sandman
+ * @LastEditTime: 2020-07-07 22:44:45
+ * @LastEditors: kay
  */
 
 import multipartRequest from "./multipart-request"
@@ -30,7 +30,7 @@ export async function put(client: any, input: any, options?: {format?: string, h
   if (options.format === 'dag-cbor') {
     var obj = convertToCborIshObj(input)
     if (obj.error != null) {
-      throw new Error(obj.error) 
+      throw new Error(obj.error)
     }
     serialize = dagCBOR.util.serialize(obj.obj)
   } else if (options.format == 'dag-pb') {

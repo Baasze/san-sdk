@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: sandman sandmanhome@hotmail.com
  * @Date: 2020-06-01 11:27:41
- * @LastEditTime: 2020-07-07 10:10:37
+ * @LastEditTime: 2020-07-07 22:42:08
  * @LastEditors: kay
 --> 
 
@@ -378,6 +378,8 @@ swarmPeersResult.addrs | `Array<string>` | peer 地址|
 
 1. dag put
 
+`dag put` 支持带 cid 引用的 object 
+
 Parameters:
 
 名称 | 类型 | 说明 | 备注
@@ -386,22 +388,29 @@ dagNode| Object | 遵循 IPLD 格式之一的 DAG 节点
 
 ```js
 var obj = {
+  z: 'icfs'
+}
+// dag put input 类型 object, string
+var cid = await client.dagPut(obj)
+console.log('dag put obj: ', cid)
+
+var obj1 = {
   a: 1,
   b: [1, 2, 3],
   c: {
     ca: [5, 6, 7],
-    cb: 'foo'
+    cb: {'/': cid} // cb 关联到 obj 对象
   }
 }
-// dag put
-var cid = await client.dagPut(obj)
-console.log('dag put: ', cid)
+// dag put obj1 带 links 到 obj 对象
+cid = await client.dagPut(obj1)
+console.log('dag put obj1: ', cid)
 ```
 
 response :
 
 ```
-bafy43jqbedmog7g3cijdypqujmfiqa6sjzcxmnhjh5rfqloywznaez734ltyu
+bafy43jqbeanvradi5xifj4c656xv427lzv7kv6xcuaqfxymg5cdsflns2pa5a
 ```
 
 类型 | 说明 | 备注
@@ -418,7 +427,7 @@ cid | string | cid
 path | string | DAG 要解析的路径（可选）
 
 ```js
-var res = await client.dagResolve('bafy43jqbedmog7g3cijdypqujmfiqa6sjzcxmnhjh5rfqloywznaez734ltyu', 'a')
+var res = await client.dagResolve('bafy43jqbeanvradi5xifj4c656xv427lzv7kv6xcuaqfxymg5cdsflns2pa5a', 'a')
 console.log('dag resolve: ', res)
 ```
 
@@ -449,14 +458,23 @@ cid | string | cid
 path | string | DAG 要解析的路径（可选）
 
 ```js
-var res = await client.dagGet('bafy43jqbedmog7g3cijdypqujmfiqa6sjzcxmnhjh5rfqloywznaez734ltyu', 'c/ca')
-console.log('dag get: ', res)
+var cid = 'bafy43jqbeanvradi5xifj4c656xv427lzv7kv6xcuaqfxymg5cdsflns2pa5a' // obj1 cid
+var res = await client.dagGet('bafy43jqbeanvradi5xifj4c656xv427lzv7kv6xcuaqfxymg5cdsflns2pa5a', 'c/ca')
+console.log('dag get "obj1.c.ca": ', res)
+
+// dag get obj1 的 links cid 也就是 obj
+res = await client.dagGet(cid, 'c/cb')
+console.log('dag get "obj": ', res)
+
 ```
 
 respose: 
 
-```js
-{ value: [ 5, 6, 7 ], remainderPath: '' }
+```json
+dag get obj1.c.ca: { "value": [ 5, 6, 7 ], "remainderPath": "" }
+
+dag get obj.z: { "value": { "z": "icfs" }, "remainderPath": "" }
+
 ```
 
 类型 | 说明 | 备注
