@@ -1,6 +1,11 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+
+## [0.2.5] - n2020-07-08
+
+- dag put support links 
+
 ## [0.2.4] - 2020-07.07
 
 - add dag put url, get default return {path: cid, content: BufferList}
