@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: sandman sandmanhome@hotmail.com
  * @Date: 2020-06-01 11:27:41
- * @LastEditTime: 2020-07-07 22:42:08
+ * @LastEditTime: 2020-07-08 11:42:26
  * @LastEditors: kay
 --> 
 
@@ -201,7 +201,7 @@ depth | number | 深度 |
 
 ## pin
 
-1. pin add
+1、 pin add
 
 ```js
 var res = await client.pinAdd("bafym3jqbedlgf7pqw6ednj4spj4yv2tgmqoeiwjfkr726gbj4tzssvn3rqqk4")
@@ -214,7 +214,7 @@ response:
 :-: | :-: | :-: | :-:
 cid | string | cid |
 
-2. pin ls
+2、 pin ls
 
 ```js
 res = await client.pinLs("bafym3jqbedlgf7pqw6ednj4spj4yv2tgmqoeiwjfkr726gbj4tzssvn3rqqk4")
@@ -228,7 +228,7 @@ response:
 cid | string | cid |
 type | string | pin 状态 |
 
-3. pin rm
+3、 pin rm
 
 ```js
 res = await client.pinRm("bafym3jqbedlgf7pqw6ednj4spj4yv2tgmqoeiwjfkr726gbj4tzssvn3rqqk4")
@@ -243,7 +243,7 @@ cid | string | cid |
 
 ## key
 
-1. key gen 
+1、key gen 
 
 创建秘钥对默认 sm2
 
@@ -260,7 +260,7 @@ response:
 name | string | 密钥对名称 |
 id | string | key hash |
 
-2. key list
+2、key list
 
 显示所有密钥对
 
@@ -290,7 +290,7 @@ response:
 keyResult.name | string | 密钥对名称 |
 keyResult.id | string | key hash |
 
-3. key rm 
+3、key rm 
 
 删除密钥对
 
@@ -316,7 +316,7 @@ id | string | key hash |
 
 ## swarm
 
-1. swarm peers
+1、swarm peers
 
 所有已经连接的 peers
 
@@ -344,7 +344,7 @@ swarmPeersResult.addr | string | peer 地址 |
 swarmPeersResult.peer | string | peer id |
 swarmPeersResult.direction | number | key hash |
 
-2. swarm addrs
+2、swarm addrs
 
 所有已知 peer 的地址列表
 
@@ -376,7 +376,7 @@ swarmPeersResult.addrs | `Array<string>` | peer 地址|
 
 ## dag
 
-1. dag put
+1、dag put
 
 `dag put` 支持带 cid 引用的 object 
 
@@ -417,7 +417,7 @@ bafy43jqbeanvradi5xifj4c656xv427lzv7kv6xcuaqfxymg5cdsflns2pa5a
 :-: | :-: | :-:
 `Promise<string>`| cid |
 
-2. dag resolve
+2、dag resolve
 
 Parameters:
 
@@ -448,7 +448,7 @@ response:
 - `cid`: 解析的结果 cid
 - `remPath`: 节点无法解析路径的其余部分
 
-3. dagGet
+3、dagGet
 
 Parameters:
 
@@ -470,7 +470,7 @@ console.log('dag get "obj": ', res)
 
 respose: 
 
-```json
+```js
 dag get obj1.c.ca: { "value": [ 5, 6, 7 ], "remainderPath": "" }
 
 dag get obj.z: { "value": { "z": "icfs" }, "remainderPath": "" }
@@ -485,7 +485,7 @@ dag get obj.z: { "value": { "z": "icfs" }, "remainderPath": "" }
 - `value`: dag get 获取的值
 - `remainderPath`: 节点无法解析路径的其余部分
 
-4. dag put url
+4、dag put url
 
 Parameters:
 
@@ -512,7 +512,7 @@ bafy43jqbedcfikcertnxzdkg2zlnpnfh2747nhkaukdr236cffboyfxu3u7zi
 
 ## name
 
-1. name publish
+1、name publish
 
 发布 IPNS 名称
 
@@ -545,7 +545,7 @@ name publish:  {
 - `name`: 内容发布的名称
 - `value`: 名称指向的真实的地址
 
-2. name resolve
+2、name resolve
 
 解析 IPNS 名称
 
@@ -577,7 +577,7 @@ response:
 Array<{Path: string}>:
 - `Path`: 解析出来的真实的地址
 
-3. name pubsub state
+3、name pubsub state
 
 ```js
 var res = await client.namePubsubState()
@@ -594,7 +594,7 @@ response:
 :-: | :-: | :-:
 `Promise<{enabled: Boolean}>`| pubsub 的状态|
 
-4. name pubsub subs
+4、name pubsub subs
 
 ```js
 var res = await client.namePubsubSubs()
@@ -614,7 +614,7 @@ response:
 :-: | :-: | :-:
 `Promise<string[]>`| 当前所有订阅 |
 
-5. name pubsub cancel
+5、name pubsub cancel
 
 Parameters:
 
@@ -640,7 +640,7 @@ response:
 
 ## bootstrap
 
-1. bootstrap list
+1、bootstrap list
 
 ```js
 var res = await client.bootstrapList()
@@ -661,7 +661,7 @@ response:
 :-: | :-: | :-:
 `Promise<{Peers: string[]}>`| 所有 bootstrap 地址 |
 
-2. bootstrap add
+2、bootstrap add
 
 Parameters:
 
@@ -688,7 +688,7 @@ response:
 :-: | :-: | :-:
 `Promise<{Peers: string[]}>`| 所有已加入的 bootstrap 地址 |
 
-3. bootstrap rm
+3、bootstrap rm
 
 Parameters:
 

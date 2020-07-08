@@ -3,7 +3,7 @@ Javascript
 ==========
 
 san-sdk Javascript SDK 简介
---------------------------
+----------------------------
 
 san-sdk Javascript SDK 提供了一整套对 区块链、分布式存储 进行管理操作的 Javascript 库。 目前，SDK 支持密钥管理、区块链交互、分布式存储交互。
 
