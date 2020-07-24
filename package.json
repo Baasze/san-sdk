@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/Baasze/san-sdk#readme",
   "dependencies": {
+    "abort-controller": "^3.0.0",
     "bignumber.js": "^9.0.0",
     "buffer": "^5.6.0",
     "class-is": "^1.1.0",

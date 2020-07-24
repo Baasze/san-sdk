@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: sandman sandmanhome@hotmail.com
  * @Date: 2020-06-01 11:27:41
- * @LastEditTime: 2020-07-08 11:42:26
+ * @LastEditTime: 2020-07-24 12:07:12
  * @LastEditors: kay
 --> 
 
@@ -473,7 +473,7 @@ respose:
 ```js
 dag get obj1.c.ca: { "value": [ 5, 6, 7 ], "remainderPath": "" }
 
-dag get obj.z: { "value": { "z": "icfs" }, "remainderPath": "" }
+dag get obj: { "value": { "z": "icfs" }, "remainderPath": "" }
 
 ```
 
@@ -545,31 +545,6 @@ name publish:  {
 - `name`: 内容发布的名称
 - `value`: 名称指向的真实的地址
 
-2、name resolve
-
-解析 IPNS 名称
-
-Parameters:
-
-名称 | 类型 | 说明 | 备注
-:-: | :-: | :-: | :-:
-path | string | IPNS 地址
-
-```js
-var res = await client.nameResolve('bafzm3jqbea4ghtxynopvpr4nfdub3oy4fqcoz7wg5w3qln7fntbcx3kip5dky')
-console.log('name resolve: ', res)
-```
-
-response:
-
-```js
-[
-  {
-    Path: '/ipfs/bafym3jqbedlgf7pqw6ednj4spj4yv2tgmqoeiwjfkr726gbj4tzssvn3rqqk4'
-  }
-]
-```
-
 类型 | 说明 | 备注
 :-: | :-: | :-:
 `Promise<{Path: string}[]>`| name resolve 结果|
@@ -577,7 +552,7 @@ response:
 Array<{Path: string}>:
 - `Path`: 解析出来的真实的地址
 
-3、name pubsub state
+2、name pubsub state
 
 ```js
 var res = await client.namePubsubState()
@@ -594,7 +569,7 @@ response:
 :-: | :-: | :-:
 `Promise<{enabled: Boolean}>`| pubsub 的状态|
 
-4、name pubsub subs
+3、name pubsub subs
 
 ```js
 var res = await client.namePubsubSubs()
@@ -614,7 +589,7 @@ response:
 :-: | :-: | :-:
 `Promise<string[]>`| 当前所有订阅 |
 
-5、name pubsub cancel
+4、name pubsub cancel
 
 Parameters:
 
@@ -714,3 +689,91 @@ response:
 类型 | 说明 | 备注
 :-: | :-: | :-:
 `Promise<{Peers: string[]}>`| 所有删除的 bootstrap 地址 |
+
+## pubsub
+
+1、ls
+
+节点订阅的 topicIDs 列表
+
+```js
+var res = await client.pubsubLs()
+console.log("pubsub ls :", res)
+```
+
+response:
+
+```json
+[
+  "/record/L2lwbnMvzaYBIPWGbKznrINMM9lCx8IPfU4qonFl5B9Fzcg23CWfkf1T",
+  "/record/L2lwbnMvzaYBIFEaz_DrtO31Rrx1WSpTLW585nRT_3Kcw91SopLgy2ic"
+]
+```
+
+2、peers
+
+订阅了 `topic` 的 peer ID 的列表
+
+```js
+var topic = 'fly to the moon'
+var res = await client.pubsubPeers(topic)
+console.log('pubsub peers', res)
+```
+
+response:
+
+```json
+[ "bafzm3jqbec7ulhfmm7s7ydt2mf32nbsjy4237mvzj5skzbkxrfxz7axghsyum" ]
+```
+
+3、pub
+
+```js
+console.log('pubsub pub')
+await client.pubsubPub(topic, 'to the moon')
+```
+
+response: 
+
+`Promise<void>` , 否则抛出异常
+
+4、sub
+
+订阅功能只支持在 node 端使用，不支持小程序
+
+```js
+// sub 的回调处理 msg type {from: Buffer, data: Buffer, seqno: Buffer, topicIDs: Array}
+function handler (msg){
+  console.log(msg)
+}
+// sub topic 
+await client.pubsubSub(topic, handler)
+```
+
+handler msg:
+
+```js
+{
+  "from": <Buffer cd a6 01 20 51 1a cf f0 eb b4 ed f5 46 bc 75 59 2a 53 2d 6e 7c e6 74 53 ff 72 9c c3 dd 52 a2 92 e0 cb 68 9c>,
+  "data": <Buffer 68 61 68 61>,
+  "seqno": <Buffer 16 24 58 8c ff 42 8d fb>,
+  "topicIDs": [ "fly to the moon" ]
+}
+```
+
+5、unsub
+
+取消订阅 `topic`
+
+```js
+// sub 的回调处理 msg type {from: Buffer, data: Buffer, seqno: Buffer, topicIDs: Array}
+function handler (msg){
+  console.log(msg)
+}
+// sub topic 
+await client.pubsubUnsub(topic, handler)
+```
+
+response:
+
+`Promise<void>` , 否则抛出异常

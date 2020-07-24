@@ -2,7 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.2.5] - n2020-07-08
+## [0.3.0] - 2020-07-24
+
+- add pubsub, move nameResolve
+
+## [0.2.5] - 2020-07-08
 
 - dag put support links 
 

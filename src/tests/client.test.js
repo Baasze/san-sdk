@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-02 10:39:18
- * @LastEditTime: 2020-07-08 11:04:06
+ * @LastEditTime: 2020-07-24 12:05:37
  * @LastEditors: kay
  */
 
@@ -212,10 +212,6 @@ describe('ICFS Client', function(){
     var res = await client.namePublish('bafym3jqbedlgf7pqw6ednj4spj4yv2tgmqoeiwjfkr726gbj4tzssvn3rqqk4', keyName)
     console.log('name publish: ', res)
 
-    // name resolve
-    res = await client.nameResolve(res.name)
-    console.log('name resolve: ', res)
-
     // name pubsub state
     res = await client.namePubsubState()
     console.log('name pubsub state: ', res)
@@ -242,5 +238,35 @@ describe('ICFS Client', function(){
     // bootstrap rm
     res = await client.bootstrapRm('/dns4/icfs.baasze.com/tcp/4001/p2p/bafzm3jqbec7ulhfmm7s7ydt2mf32nbsjy4237mvzj5skzbkxrfxz7axghsyum')
     console.log('bootstrap rm:', res)
+  }, 30000)
+  
+  it('pubsub test', async function () {
+    var res = await client.pubsubLs()
+    console.log('pubsub ls: ', res)
+
+    var topic = 'fly to the moon'
+    res = await client.pubsubPeers(topic)
+    console.log('pubsub peers', res)
+
+    console.log('pubsub pub')
+    await client.pubsubPub(topic, 'to the moon')
+
+    function handler (msg){
+      console.log(msg)
+    }
+    console.log('pubsub unsub')
+    await client.pubsubUnsub(topic, handler)
+    /*
+      仅限 node 客户端 使用 pub sub 功能
+
+      // sub 的回调处理 msg type {from: Buffer, data: Buffer, seqno: Buffer, topicIDs: Array}
+      function handler (msg){
+        console.log(msg)
+      }
+      // sub topic 
+      await client.pubsubSub(topic, handler)
+      // unsub topic
+      await client.pubsubUnsub(topic, handler)
+    */
   }, 30000)
 });

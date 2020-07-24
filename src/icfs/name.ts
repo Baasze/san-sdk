@@ -2,13 +2,13 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-22 17:47:47
- * @LastEditTime: 2020-07-06 11:26:54
+ * @LastEditTime: 2020-07-24 13:36:23
  * @LastEditors: kay
  */
 
 import toCamel from './utils/to-camel'
-import toIterable = require ('./utils/iterator')
-const ndjson = require('iterable-ndjson')
+// import toIterable = require ('./utils/iterator')
+// const ndjson = require('iterable-ndjson')
 
 export async function publish(client: any, path: string, options?: { key: string }) {
   let url = `/api/v0/name/publish?arg=${path}`
@@ -19,13 +19,13 @@ export async function publish(client: any, path: string, options?: { key: string
   return toCamel(await res.json())
 }
 
-export async function * resolve(client: any, path: string) {
-  const res = await client.fetch(`/api/v0/name/resolve?arg=${path}`)
+// export async function * resolve(client: any, path: string) {
+//   const res = await client.fetch(`/api/v0/name/resolve?arg=${path}`)
 
-  for await (const result of ndjson(toIterable(res.body))) {
-    yield result.Path
-  }
-}
+//   for await (const result of ndjson(toIterable(res.body))) {
+//     yield result.Path
+//   }
+// }
 
 export namespace pubsub {
   export async function subs(client: any) {

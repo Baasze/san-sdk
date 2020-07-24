@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-01 10:45:26
- * @LastEditTime: 2020-07-07 22:47:45
+ * @LastEditTime: 2020-07-24 11:44:01
  * @LastEditors: kay
  */
 
@@ -43,10 +43,11 @@ export class IcfsClient {
       }
       response = await f(url, {
         headers: options.headers ? options.headers : {},
-        body: options.body ? options.body : null,
+        body: options.body,
         method: options.method ? options.method : 'POST',
         dataType: options.dataType ? options.dataType : 'text',
         responseType: options.responseType ? options.responseType : 'text',
+        signal: options.signal
       });
     } catch (e) {
       e.isFetchError = true;
@@ -190,14 +191,14 @@ export class IcfsClient {
     return (await import('./name')).publish(this, path, {key: key})
   }
 
-  public async nameResolve(path: string): Promise<{ Path: string }[]> {
-    var arr: Array<{ Path: string }> = new Array<{ Path: string }>()
-    let res = (await import('./name')).resolve(this, path)
-    for await (const path of res) {
-      arr.push({Path: path})
-    }
-    return arr
-  }
+  // public async nameResolve(path: string): Promise<{ Path: string }[]> {
+  //   var arr: Array<{ Path: string }> = new Array<{ Path: string }>()
+  //   let res = (await import('./name')).resolve(this, path)
+  //   for await (const path of res) {
+  //     arr.push({Path: path})
+  //   }
+  //   return arr
+  // }
   
   public async namePubsubSubs(): Promise<string[]> {
     return (await import('./name')).pubsub.subs(this)
@@ -222,5 +223,27 @@ export class IcfsClient {
 
   public async bootstrapRm(peer: string) {
     return (await import('./bootstrap')).rm(this, peer)
+  }
+
+  // pubsub
+  public async pubsubLs() {
+    return (await import('./pubsub')).ls(this)
+  }
+
+  public async pubsubPeers(topic?: string | string[]) : Promise<string[]>{
+    return (await import('./pubsub')).peers(this, topic)
+  }
+  
+  public async pubsubPub(topic: string, data: string) {
+    return (await import('./pubsub')).pub(this, topic, data)
+  }
+
+  public async pubsubSub(topic: string, handler: any) {
+    // console.log(topic)
+    return (await import('./pubsub')).sub(this, topic, handler)
+  }
+
+  public async pubsubUnsub(topic: string, handler?: any) {
+    return (await import('./pubsub')).unsub(topic, handler)
   }
 }
