@@ -1,6 +1,6 @@
 {
   "name": "san-sdk.js",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -25,7 +25,7 @@
     "bignumber.js": "^9.0.0",
     "buffer": "^5.6.0",
     "class-is": "^1.1.0",
-    "icbsc.js": "^1.0.19",
+    "icbsc.js": "^1.1.0",
     "is-circular": "^1.0.2",
     "iterable-ndjson": "^1.1.0",
     "merge-options": "^2.0.0",

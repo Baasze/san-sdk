@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.1] - 2020-08-27
+
+- update icbsc.js@1.1.0
+
 ## [0.3.0] - 2020-07-24
 
 - add pubsub, move nameResolve
