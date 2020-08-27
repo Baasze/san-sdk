@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-02 10:39:18
- * @LastEditTime: 2020-07-24 12:05:37
+ * @LastEditTime: 2020-08-27 08:37:30
  * @LastEditors: kay
  */
 
@@ -172,7 +172,7 @@ describe('ICFS Client', function(){
     cid = await client.dagPut(obj1)
     console.log('dag put obj1: ', cid)
 
-    var urlCid = await client.dagPutUrl('https://w3c-ccg.github.io/did-spec/contexts/did-v1.jsonld')
+    var urlCid = await client.dagPutUrl('https://www.w3.org/ns/did/v1')
     console.log('dag put url: ', urlCid)
 
     //dag resolve
