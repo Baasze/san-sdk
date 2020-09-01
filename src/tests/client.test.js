@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-02 10:39:18
- * @LastEditTime: 2020-08-27 08:37:30
+ * @LastEditTime: 2020-09-01 15:31:09
  * @LastEditors: kay
  */
 
@@ -16,6 +16,7 @@ const toIterable = require('stream-to-it')
 
 describe('ICFS Client', function(){
   var client = new IcfsClient('http://icfs.baasze.com:5001', { fetch })
+  var date = new Date()
   // icfs add
   it('add test', async function () {
     // 只上传文件内容
@@ -104,7 +105,6 @@ describe('ICFS Client', function(){
   // icfs pin test
   it('pin test', async function () {
     // pin add
-    var date = new Date()
     var fileCid = await client.add(date.toISOString())
     var res = await client.pinAdd(fileCid)
     console.log('pin add: ', res)
@@ -209,7 +209,9 @@ describe('ICFS Client', function(){
       keyName = 'mykey'
       await client.keyGen(keyName)
     }
-    var res = await client.namePublish('bafym3jqbedlgf7pqw6ednj4spj4yv2tgmqoeiwjfkr726gbj4tzssvn3rqqk4', keyName)
+    var cid = await client.add(date.toISOString())
+    var res = await client.namePublish(cid, keyName)
+    var name = res.name
     console.log('name publish: ', res)
 
     // name pubsub state
@@ -221,10 +223,10 @@ describe('ICFS Client', function(){
     console.log('name pubsub subs: ', res)
     
     // name pubsub cancel
-    var name = 'bafzm3jqbea4ghtxynopvpr4nfdub3oy4fqcoz7wg5w3qln7fntbcx3kip5dky'
+    // var name = 'bafzm3jqbea4ghtxynopvpr4nfdub3oy4fqcoz7wg5w3qln7fntbcx3kip5dky'
     res = await client.namePubsubCancel(name)
     console.log('name pubsub cancel: ', res)
-  }, 30000)
+  }, 300000)
 
   it('bootstrap test', async function () {
     // bootstrap list

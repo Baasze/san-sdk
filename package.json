@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "jest src/tests/*",
-    "build": "tsc -p ./tsconfig.json && cp -r src/icfs/utils/files/ dist/icfs/utils/files/ && cp -r src/icfs/base/ dist/icfs/base/",
+    "build": "rm -rf dist && tsc -p ./tsconfig.json",
     "clean": "rm -rf dist",
     "docs-build": "sh docs/scripts/build.sh"
   },

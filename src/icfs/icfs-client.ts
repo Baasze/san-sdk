@@ -6,7 +6,7 @@
  * @LastEditors: kay
  */
 
-import toIterable = require('./utils/iterator')
+import toIterable = require('../utils/iterator')
 import * as Interface from './san-api-interface'
 
 export class IcfsClient {

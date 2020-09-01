@@ -2,9 +2,11 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-19 10:54:21
- * @LastEditTime: 2020-07-02 17:14:52
+ * @LastEditTime: 2020-08-28 10:44:41
  * @LastEditors: kay
  */ 
+
+const ndjson = require('../../src/base/iterable-ndjson')
 
 export async function* ls(client: any, cid?: string[] | string) {
   var arg = ''
@@ -13,20 +15,7 @@ export async function* ls(client: any, cid?: string[] | string) {
     path.forEach((cid: string) => arg += 'arg=' + cid + '&')
   }
   const res = await client.fetch('/api/v0/pin/ls?' + arg)
-  if (typeof process === 'object') {
-    const ndjson = require('iterable-ndjson')
-    for await (const pin of ndjson(res.body)) {
-      if (pin.Keys) { // non-streaming response
-        // eslint-disable-next-line guard-for-in
-        for (const key in pin.Keys) {
-          yield { cid: key, type: pin.Keys[key].Type }
-        }
-      } else {
-        yield { cid: new pin.Cid, type: pin.Type }
-      }
-    }
-  } else {
-    var pin = await res.json()
+  for await (const pin of ndjson(res.body)) {
     if (pin.Keys) { // non-streaming response
       // eslint-disable-next-line guard-for-in
       for (const key in pin.Keys) {

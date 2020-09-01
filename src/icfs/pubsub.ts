@@ -2,14 +2,14 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-07-10 10:09:45
- * @LastEditTime: 2020-07-24 11:44:45
+ * @LastEditTime: 2020-08-28 10:51:57
  * @LastEditors: kay
  */
 
-const ndjson = require('iterable-ndjson')
-const SubscriptionTracker = require('./utils/files/subscription-tracker')
+const ndjson = require('../../src/base/iterable-ndjson')
+const SubscriptionTracker = require('../../src/base/subscription-tracker')
 
-import toIterable = require('./utils/iterator')
+import toIterable = require('../utils/iterator')
 import { Buffer } from 'buffer'
 
 export async function ls(client: any) {
