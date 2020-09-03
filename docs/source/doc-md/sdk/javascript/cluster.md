@@ -2,11 +2,11 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-08-28 11:26:44
- * @LastEditTime: 2020-09-03 21:08:00
+ * @LastEditTime: 2020-09-03 21:13:23
  * @LastEditors: kay
 -->
 
-# san-sdk.js 与 icfs 分布式存储交互
+# san-sdk.js 与 icfs cluster 交互
 
 ## new Cluster Client
 
