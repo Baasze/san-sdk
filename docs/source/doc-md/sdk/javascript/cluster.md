@@ -2,9 +2,14 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-08-28 11:26:44
- * @LastEditTime: 2020-09-01 14:08:22
+ * @LastEditTime: 2020-09-03 21:08:00
  * @LastEditors: kay
 -->
+
+# san-sdk.js 与 icfs 分布式存储交互
+
+## new Cluster Client
+
 ```js
 const { IcfsClient } = require('san-sdk.js');
 // 微信小程序 fetch 使用 icbsc-fetch.js
