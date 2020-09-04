@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-08-12 10:38:46
- * @LastEditTime: 2020-09-01 14:08:00
+ * @LastEditTime: 2020-09-04 11:57:30
  * @LastEditors: kay
  */
 
@@ -15,9 +15,8 @@ describe('Cluster Client', function () {
   const client = new ClusterClient('http://icfs.baasze.com:9094', { fetch });
   var icfsClient = new IcfsClient('http://icfs.baasze.com:5001', { fetch })
   
-  var res
   it('cluster id', async function () {
-    res = await client.id()
+    var res = await client.id()
     console.log('id: \n', res)
   }, 30000)
 
@@ -29,7 +28,7 @@ describe('Cluster Client', function () {
   it('cluster pins', async function () {
     var fileCid = await icfsClient.add(date.toISOString())
     // 不配置 replication，默认 cluster 的所有节点都 pin add
-    res = await client.pinAdd(fileCid, {replication: 3})
+    var res = await client.pinAdd(fileCid, {replication: 2})
     console.log('pin add: \n', res)
     res = await client.pinLs()
     console.log('pins ls: \n', res)
@@ -38,7 +37,7 @@ describe('Cluster Client', function () {
   })
 
   it('cluster add', async function () {
-    res = await client.add('cluster test content')
+    var res = await client.add('cluster test content')
     console.log('fileCid: ', res)
     
     // 流形式上传文件
@@ -79,7 +78,7 @@ describe('Cluster Client', function () {
   }, 300000)
 
   it('cluster peers', async function () {
-    res = await client.peersLs()
+    var res = await client.peersLs()
     console.log('peers ls: \n', res)
     // crdt consensus component cannot remove peers
     // res = await client.peersRm("12D3KooWM31NYTioAf5PiBS5yvxxuucM5WCACfxDAfRBoPRqdUev")
@@ -87,7 +86,7 @@ describe('Cluster Client', function () {
   }, 30000)
 
   it('cluster status', async function () { 
-    res = await client.status()
+    var res = await client.status()
     console.log('status of all cids: \n', res)
     var fileCid = await icfsClient.add(date.toISOString())
     res = await client.status(fileCid)
@@ -95,7 +94,7 @@ describe('Cluster Client', function () {
   }, 30000)
 
   it('cluster recover', async function () {
-    res = await client.recover()
+    var res = await client.recover()
     console.log('recover all: \n', res)
     var fileCid = await icfsClient.add(date.toISOString())
     res = await client.recover(fileCid)
@@ -103,7 +102,7 @@ describe('Cluster Client', function () {
   }, 30000)
 
   it('cluster health', async function () {
-    res = await client.healthGraph()
+    var res = await client.healthGraph()
     console.log('health graph: \n', res)
 
     res = await client.healthMetrics('ping')

@@ -4,18 +4,6 @@
 const { Buffer } = require('buffer')
 //const globalThis = require('ipfs-utils/src/globalthis')
 
-void function() {
-  if (typeof globalThis === 'object') return
-  Object.defineProperty(Object.prototype, '__magic__', {
-    get: function () {
-      return this
-    },
-    configurable: true
-  })
-  __magic__.globalThis = __magic__
-  delete Object.prototype.__magic__
-}();
-
 function errCode(err, code, props) {
   var key;
 
@@ -269,6 +257,9 @@ function isBytes (obj) {
 }
 
 function isBloby (obj) {
+  if (typeof process !== 'object') {
+    return false
+  }
   return typeof globalThis.Blob !== 'undefined' && obj instanceof globalThis.Blob
 }
 

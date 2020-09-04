@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-08-10 17:49:44
- * @LastEditTime: 2020-09-01 13:46:55
+ * @LastEditTime: 2020-09-03 16:55:57
  * @LastEditors: kay
  */
 
@@ -13,6 +13,7 @@ export class ClusterClient {
   public endpoint: string;
   public fetchBuiltin:
     (input?: Request | string, init?: any) => Promise<any>;
+  public headerOrigin: string;
   constructor(
     endpoint: string,
     args: {
@@ -20,6 +21,9 @@ export class ClusterClient {
         init?: RequestInit) => Promise<any>
     } = {},
   ) {
+    if (typeof process != 'object') {
+      this.headerOrigin = 'mini-program'
+    }
     this.endpoint = endpoint.replace(/\/$/, '');
     if (args.fetch) {
       this.fetchBuiltin = args.fetch;
@@ -41,8 +45,13 @@ export class ClusterClient {
       if (options.disableEndpoint) {
         url = path
       }
+
+      var headers = options.headers ? options.headers : {}
+      if (this.headerOrigin != undefined) {
+        headers['Origin'] = this.headerOrigin
+      }
       response = await f(url, {
-        headers: options.headers ? options.headers : {},
+        headers: headers,
         body: options.body,
         method: options.method ? options.method : 'POST',
         dataType: options.dataType ? options.dataType : 'text',

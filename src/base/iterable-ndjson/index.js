@@ -2,10 +2,10 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-08-28 10:31:22
- * @LastEditTime: 2020-08-28 10:31:26
+ * @LastEditTime: 2020-09-04 08:53:19
  * @LastEditors: kay
  */
-
+var { TextDecoder, TextEncoder } = require('icbsc-text-encoding.js')
 module.exports = source => (async function * () {
   const matcher = /\r?\n/
   const decoder = new TextDecoder('utf8')

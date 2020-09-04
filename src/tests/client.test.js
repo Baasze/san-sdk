@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-02 10:39:18
- * @LastEditTime: 2020-09-01 15:31:09
+ * @LastEditTime: 2020-09-04 10:36:25
  * @LastEditors: kay
  */
 
@@ -63,9 +63,9 @@ describe('ICFS Client', function(){
   // cat file
   it('cat file test', async function(){
     // cat 返回的是 Buffer
-    var fileCid = 'bafk43jqbealhgo5gojbtmxho44abq5fznrul722d4id36sirdpcnzceavivfw'
+    var cid = await client.add(date.toISOString())
     // console.log(fileCid)
-    const res = await client.cat(fileCid)
+    var res = await client.cat(cid)
     console.log('cat: ', res.toString())
   }, 30000)
   
@@ -90,7 +90,7 @@ describe('ICFS Client', function(){
     }
 
     // return {path: cid, content: BufferList}
-    var fileCid = 'bafk43jqbeclzwhefsazzgyyjvch2osvxxg5h42ftwg66hhyx2r2qbkwgzy5ue'
+    var fileCid = 'bafym3jqbedssggxrx6t5mfdyiqauxkmknpjkn35u5kgen56dagazblllin6f2'
     var res = await client.get(fileCid)
     console.log(res)
 
@@ -98,7 +98,7 @@ describe('ICFS Client', function(){
 
   // icfs ls test
   it('ls files test', async function () {
-    var res = await client.ls("bafym3jqbedlgf7pqw6ednj4spj4yv2tgmqoeiwjfkr726gbj4tzssvn3rqqk4")
+    var res = await client.ls("bafym3jqbedssggxrx6t5mfdyiqauxkmknpjkn35u5kgen56dagazblllin6f2")
     console.log('ls: ', res)
   }, 30000)
 
@@ -110,7 +110,7 @@ describe('ICFS Client', function(){
     console.log('pin add: ', res)
  
     // pin ls
-    res = await client.pinLs([fileCid, 'bafk43jqbed6spvsvlfe7adazqq5ohzzmbri6q7uailvcmyjqca4tkcakegiew'])
+    res = await client.pinLs(fileCid)
     console.log("pin ls: ", res)
    
     // pin rm
@@ -191,7 +191,8 @@ describe('ICFS Client', function(){
   // icfs block test
   it('block test', async function () {
     // block get
-    var res = await client.blockGet('bafym3jqbedlgf7pqw6ednj4spj4yv2tgmqoeiwjfkr726gbj4tzssvn3rqqk4')
+    var cid = await client.add(date.toISOString())
+    var res = await client.blockGet(cid)
     console.log('block get: ', res);
   }, 30000)
   
