@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: sandman sandmanhome@hotmail.com
  * @Date: 2020-06-01 11:27:41
- * @LastEditTime: 2020-06-05 18:35:26
+ * @LastEditTime: 2020-09-04 14:13:51
  * @LastEditors: kay
 --> 
 
@@ -13,7 +13,7 @@
 request:
 
 ``` js
-const { Numberic } = require('san-sdk.js');
+const { Numeric } = require('san-sdk.js');
 const keyPair = Numeric.newKey();
 console.log(keyPair);
 ```
@@ -44,7 +44,7 @@ encryptData | string | 加密后密文 |
 privateKey | string | sm2 解密密钥 |
 
 ``` js
-const { Numberic, Utils, Crypto } = require('san-sdk.js');
+const { Numeric, Utils, Crypto } = require('san-sdk.js');
 const keyPair = Numeric.newKey();
 console.log(keyPair);
 
@@ -85,7 +85,7 @@ pubKey | string | sm2 验签公钥 |
 signHex | string | sm2 签名数据 | doSignature 签名后为16进制字符串
 
 ``` js
-const { Numberic, Utils, Crypto } = require('san-sdk.js');
+const { Numeric, Utils, Crypto } = require('san-sdk.js');
 const keyPair = Numeric.newKey();
 console.log(keyPair);
 

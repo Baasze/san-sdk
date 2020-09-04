@@ -2,18 +2,21 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-08-12 10:38:46
- * @LastEditTime: 2020-09-04 11:57:30
+ * @LastEditTime: 2020-09-04 13:51:02
  * @LastEditors: kay
  */
 
 const { ClusterClient, IcfsClient } = require('../index')
 const fetch = require('node-fetch')
 const fs = require('fs')
+
 var date = new Date()
+var clusterEndpoint = 'http://xxx.xxx.xxx:9094'
+var icfsEndpoint = 'http://xxx.xxx.xxx:5001'
 
 describe('Cluster Client', function () {
-  const client = new ClusterClient('http://icfs.baasze.com:9094', { fetch });
-  var icfsClient = new IcfsClient('http://icfs.baasze.com:5001', { fetch })
+  const client = new ClusterClient(clusterEndpoint, { fetch });
+  var icfsClient = new IcfsClient(icfsEndpoint, { fetch })
   
   it('cluster id', async function () {
     var res = await client.id()
@@ -69,7 +72,7 @@ describe('Cluster Client', function () {
     console.log('dirCid: ', res)
     
     // 上传 url
-    res = await client.addUrl('http://san.baasze.com/doc-md/sdk/javascript/crypto.html#sm2')
+    res = await client.addUrl('https://github.com/Baasze/san-sdk/blob/master/CHANGELOG.md')
     console.log('urlCid: ', res)
 
     // 指定在集群中备份的副本数量

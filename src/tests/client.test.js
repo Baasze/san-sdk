@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-02 10:39:18
- * @LastEditTime: 2020-09-04 10:36:25
+ * @LastEditTime: 2020-09-04 13:50:25
  * @LastEditors: kay
  */
 
@@ -14,8 +14,9 @@ const pipe = require('it-pipe')
 const { map } = require('streaming-iterables')
 const toIterable = require('stream-to-it')
 
+var icfsEndpoint = 'http://xxx.xxx.xxx:5001'
 describe('ICFS Client', function(){
-  var client = new IcfsClient('http://icfs.baasze.com:5001', { fetch })
+  var client = new IcfsClient(icfsEndpoint, { fetch })
   var date = new Date()
   // icfs add
   it('add test', async function () {
@@ -56,7 +57,7 @@ describe('ICFS Client', function(){
     console.log('dirCid: ', dirCid)
     
     // 上传 url
-    var urlCid = await client.addUrl('http://san.baasze.com/doc-md/sdk/javascript/crypto.html#sm2')
+    var urlCid = await client.addUrl('https://github.com/Baasze/san-sdk/blob/master/CHANGELOG.md')
     console.log('urlCid: ', urlCid)
   }, 30000)
 
@@ -235,11 +236,11 @@ describe('ICFS Client', function(){
     console.log('bootstrap list: ', res)
 
     // bootstrap add
-    res = await client.bootstrapAdd('/dns4/icfs.baasze.com/tcp/4001/p2p/bafzm3jqbec7ulhfmm7s7ydt2mf32nbsjy4237mvzj5skzbkxrfxz7axghsyum')
+    res = await client.bootstrapAdd('/dns4/xxx.xxx.xxx/tcp/4001/p2p/bafzm3jqbec7ulhfmm7s7ydt2mf32nbsjy4237mvzj5skzbkxrfxz7axghsyum')
     console.log('bootstrap add:', res)
     
     // bootstrap rm
-    res = await client.bootstrapRm('/dns4/icfs.baasze.com/tcp/4001/p2p/bafzm3jqbec7ulhfmm7s7ydt2mf32nbsjy4237mvzj5skzbkxrfxz7axghsyum')
+    res = await client.bootstrapRm('/dns4/xxx.xxx.xxx/tcp/4001/p2p/bafzm3jqbec7ulhfmm7s7ydt2mf32nbsjy4237mvzj5skzbkxrfxz7axghsyum')
     console.log('bootstrap rm:', res)
   }, 30000)
   

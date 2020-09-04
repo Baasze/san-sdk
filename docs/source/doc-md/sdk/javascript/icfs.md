@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: sandman sandmanhome@hotmail.com
  * @Date: 2020-06-01 11:27:41
- * @LastEditTime: 2020-07-24 12:07:12
+ * @LastEditTime: 2020-09-04 14:01:05
  * @LastEditors: kay
 --> 
 
@@ -14,7 +14,9 @@
 const { IcfsClient } = require('san-sdk.js');
 // 微信小程序 fetch 使用 icbsc-fetch.js
 const fetch = require('node-fetch');
-const client = new IcfsClient('http://icfs.baasze.com:5001', {fetch});
+
+var icfsEndpoint = 'http://xxx.xxx.xxx:5001';
+const client = new IcfsClient(icfsEndpoint, {fetch});
 ```
 
 ## add
@@ -26,10 +28,6 @@ const client = new IcfsClient('http://icfs.baasze.com:5001', {fetch});
 以 String 形式 add:
 
 ```js
-const { IcfsClient } = require('san-sdk.js');
-const fetch = require('node-fetch');
-const client = new IcfsClient('http://icfs:baasze.com:5001', {fetch});
-
 (async () => {
   let content = 'my test file.';
   let result = await client.add(content);
@@ -40,11 +38,7 @@ const client = new IcfsClient('http://icfs:baasze.com:5001', {fetch});
 以流形式 add:
 
 ```js
-const { IcfsClient } = require('san-sdk.js');
-const fetch = require('node-fetch');
-const client = new IcfsClient('http://icfs.baasze.com:5001', {fetch});
 const fs = require('fs');
-
 (async () => {
   let result = await client.add(fs.createReadStream(__dirname + '/client.test.js'));
   console.log(result);
@@ -54,10 +48,6 @@ const fs = require('fs');
 2、add 带根目录文件
 
 ```js
-const { IcfsClient } = require('san-sdk.js');
-const fetch = require('node-fetch');
-const client = new IcfsClient('http://icfs.baasze.com:5001', {fetch});
-
 let rootDir = 'test';
 let files = [{
   path: `${rootDir}/file1.txt`,
@@ -80,11 +70,8 @@ let files = [{
 3、add Url
 
 ```js
-const { IcfsClient } = require('san-sdk.js');
-const fetch = require('node-fetch');
-const client = new IcfsClient('http://icfs.baasze.com:5001', {fetch});
 (async () => {
-  var urlCid = await client.addUrl('http://san.baasze.com')
+  var urlCid = await client.addUrl('https://github.com/Baasze/san-sdk/blob/master/CHANGELOG.md')
   console.log('urlCid: ', urlCid)
 })()
 ```
@@ -104,11 +91,8 @@ bafk43jqbec3jogyafk5hilvedlekzsnkmhvfh5etcromha6kn3zetetenss3q
   const path = require('path');
   const pipe = require('it-pipe');
   const fs = require('fs');
-  const require = require('node-fetch');
   const toIterable = require('stream-to-it');
-  const { IpfsClient }  = require('san-sdk.js');
 
-  const client = new IpfsClient('http://icfs.baasze.com:5001', { fetch });
   let output = './';
   // 流形式 get 并存储于指定路径
   (async () => {
@@ -139,10 +123,6 @@ bafk43jqbec3jogyafk5hilvedlekzsnkmhvfh5etcromha6kn3zetetenss3q
 cat 返回的结果 buffer
 
 ```js
-const { IcfsClient } = require('san-sdk.js');
-const fetch = require('node-fetch');
-const client = new IcfsClient('http://icfs.baasze.com:5001', {fetch});
-
 (async () => {
   var fileCid = 'bafk43jqbealhgo5gojbtmxho44abq5fznrul722d4id36sirdpcnzceavivfw'
   const res = await client.cat(fileCid)
@@ -153,10 +133,6 @@ const client = new IcfsClient('http://icfs.baasze.com:5001', {fetch});
 ## ls
 
 ```js
-const { IcfsClient } = require('san-sdk.js');
-const fetch = require('node-fetch');
-const client = new IcfsClient('http://icfs.baasze.com:5001', {fetch});
-
 (async()=>{
   var res = await client.ls("bafym3jqbedlgf7pqw6ednj4spj4yv2tgmqoeiwjfkr726gbj4tzssvn3rqqk4");
   console.log(res)
@@ -330,7 +306,7 @@ response:
 ```js
 [
   {
-    addr: '/ip4/121.89.208.188/tcp/4001',
+    addr: '/ip4/xxx.xxx.xxx.xxx/tcp/4001',
     peer: 'bafzm3jqbec7ulhfmm7s7ydt2mf32nbsjy4237mvzj5skzbkxrfxz7axghsyum',
     direction: 0
   }
@@ -360,7 +336,7 @@ response:
   {
     id: 'bafzm3jqbec7ulhfmm7s7ydt2mf32nbsjy4237mvzj5skzbkxrfxz7axghsyum',
     addrs: [
-      '/dns4/icfs.baasze.com/tcp/4001',
+      '/dns4/xxx.xxx.xxx/tcp/4001',
       '/ip4/172.17.0.1/tcp/4001',
       '/ip4/172.26.142.75/tcp/4001'
     ]
@@ -627,7 +603,7 @@ response:
 ```js
 {
   Peers: [
-    '/dns4/icfs.baasze.com/tcp/4001/p2p/bafzm3jqbec7ulhfmm7s7ydt2mf32nbsjy4237mvzj5skzbkxrfxz7axghsyum'
+    '/dns4/xxx.xxx.xxx/tcp/4001/p2p/bafzm3jqbec7ulhfmm7s7ydt2mf32nbsjy4237mvzj5skzbkxrfxz7axghsyum'
   ]
 }
 ```
@@ -645,7 +621,7 @@ Parameters:
 peer | string | peer 地址
 
 ```js
-var res = await client.bootstrapAdd('/dns4/icfs.baasze.com/tcp/4001/p2p/bafzm3jqbec7ulhfmm7s7ydt2mf32nbsjy4237mvzj5skzbkxrfxz7axghsyum')
+var res = await client.bootstrapAdd('/dns4/xxx.xxx.xxx/tcp/4001/p2p/bafzm3jqbec7ulhfmm7s7ydt2mf32nbsjy4237mvzj5skzbkxrfxz7axghsyum')
 console.log('bootstrap add:', res)
 ```
 
@@ -654,7 +630,7 @@ response:
 ```js
 {
   Peers: [
-    '/dns4/icfs.baasze.com/tcp/4001/p2p/bafzm3jqbec7ulhfmm7s7ydt2mf32nbsjy4237mvzj5skzbkxrfxz7axghsyum'
+    '/dns4/xxx.xxx.xxx/tcp/4001/p2p/bafzm3jqbec7ulhfmm7s7ydt2mf32nbsjy4237mvzj5skzbkxrfxz7axghsyum'
   ]
 }
 ```
@@ -672,7 +648,7 @@ Parameters:
 peer | string | peer 地址
 
 ```js
-var res = await client.bootstrapRm('/dns4/icfs.baasze.com/tcp/4001/p2p/bafzm3jqbec7ulhfmm7s7ydt2mf32nbsjy4237mvzj5skzbkxrfxz7axghsyum')
+var res = await client.bootstrapRm('/dns4/xxx.xxx.xxx/tcp/4001/p2p/bafzm3jqbec7ulhfmm7s7ydt2mf32nbsjy4237mvzj5skzbkxrfxz7axghsyum')
 console.log('bootstrap add:', res)
 ```
 
@@ -681,7 +657,7 @@ response:
 ```js
 {
   Peers: [
-    '/dns4/icfs.baasze.com/tcp/4001/p2p/bafzm3jqbec7ulhfmm7s7ydt2mf32nbsjy4237mvzj5skzbkxrfxz7axghsyum'
+    '/dns4/xxx.xxx.xxx/tcp/4001/p2p/bafzm3jqbec7ulhfmm7s7ydt2mf32nbsjy4237mvzj5skzbkxrfxz7axghsyum'
   ]
 }
 ```

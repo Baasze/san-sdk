@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-08-28 11:26:44
- * @LastEditTime: 2020-09-03 21:13:23
+ * @LastEditTime: 2020-09-04 13:56:41
  * @LastEditors: kay
 -->
 
@@ -11,10 +11,12 @@
 ## new Cluster Client
 
 ```js
-const { IcfsClient } = require('san-sdk.js');
+const { ClusterClient } = require('san-sdk.js');
 // 微信小程序 fetch 使用 icbsc-fetch.js
 const fetch = require('node-fetch');
-const client = new IcfsClient('http://icfs.baasze.com:9094', {fetch});
+
+var icfsEndpoint = 'http://xxx.xxx.xxx:9094'
+const client = new ClusterClient(icfsEndpoint, {fetch});
 ```
 
 ## add
@@ -26,10 +28,6 @@ const client = new IcfsClient('http://icfs.baasze.com:9094', {fetch});
 以 String 形式 add:
 
 ```js
-const { ClusterClient } = require('san-sdk.js');
-const fetch = require('node-fetch');
-const client = new ClusterClient('http://icfs.baasze.com:9094', {fetch});
-
 (async () => {
   let content = 'cluster test filse';
   let result = await client.add(content);
@@ -40,11 +38,7 @@ const client = new ClusterClient('http://icfs.baasze.com:9094', {fetch});
 以流形式 add:
 
 ```js
-const { IcfsClient } = require('san-sdk.js');
-const fetch = require('node-fetch');
-const client = new IcfsClient('http://icfs.baasze.com:9094', {fetch});
 const fs = require('fs');
-
 (async () => {
   let result = await client.add(fs.createReadStream(__dirname + '/cluster.test.js'));
   console.log(result);
@@ -54,10 +48,6 @@ const fs = require('fs');
 2、add 带根目录文件
 
 ```js
-const { IcfsClient } = require('san-sdk.js');
-const fetch = require('node-fetch');
-const client = new IcfsClient('http://icfs.baasze.com:9094', {fetch});
-
 let rootDir = 'cluster';
 let files = [{
   path: `${rootDir}/file1.txt`,
@@ -80,11 +70,8 @@ let files = [{
 3、add Url
 
 ```js
-const { IcfsClient } = require('san-sdk.js');
-const fetch = require('node-fetch');
-const client = new IcfsClient('http://icfs.baasze.com:9094', {fetch});
 (async () => {
-  var urlCid = await client.addUrl('http://san.baasze.com')
+  var urlCid = await client.addUrl('https://github.com/Baasze/san-sdk/blob/master/CHANGELOG.md')
   console.log('urlCid: ', urlCid)
 })()
 ```
@@ -102,15 +89,11 @@ bafk43jqbec3jogyafk5hilvedlekzsnkmhvfh5etcromha6kn3zetetenss3q
 指定在集群中备份的副本数量, 不指定默认备份到 cluster 的节点
 
 ```js
-const { ClusterClient } = require('san-sdk.js');
-const fetch = require('node-fetch');
-const client = new ClusterClient('http://icfs.baasze.com:9094', {fetch});
-
 (async () => {
-    var res
-    // 指定在集群中备份的副本数量
-    res = await client.add(date.toISOString(), { replication: 2 })
-    console.log("cluster add replication 2: ", res)
+  var res
+  // 指定在集群中备份的副本数量
+  res = await client.add(date.toISOString(), { replication: 2 })
+  console.log("cluster add replication 2: ", res)
 })();
 ```
 
@@ -230,8 +213,8 @@ response:
   {
     id: 'bafzm3jqbeb76p4ovvrkmievnxn3ik6stl7zpgnhpqlfmrvocjnajmfldwx2gq',
     addresses: [
-      '/ip4/127.0.0.1/tcp/9096/p2p/bafzm3jqbeb76p4ovvrkmievnxn3ik6stl7zpgnhpqlfmrvocjnajmfldwx2gq',
-      '/ip4/192.168.100.107/tcp/9096/p2p/bafzm3jqbeb76p4ovvrkmievnxn3ik6stl7zpgnhpqlfmrvocjnajmfldwx2gq'
+      '/ip4/xxx.xxx.xxx.xxx/tcp/9096/p2p/bafzm3jqbeb76p4ovvrkmievnxn3ik6stl7zpgnhpqlfmrvocjnajmfldwx2gq',
+      '/ip4/xxx.xxx.xxx.xxx/tcp/9096/p2p/bafzm3jqbeb76p4ovvrkmievnxn3ik6stl7zpgnhpqlfmrvocjnajmfldwx2gq'
     ],
     cluster_peers: [
       'bafzm3jqbeb76p4ovvrkmievnxn3ik6stl7zpgnhpqlfmrvocjnajmfldwx2gq'
