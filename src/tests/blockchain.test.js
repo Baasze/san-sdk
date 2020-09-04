@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: sandman sandmanhome@hotmail.com
  * @Date: 2020-06-01 16:34:44
- * @LastEditTime: 2020-06-24 15:45:10
+ * @LastEditTime: 2020-09-04 14:08:28
  * @LastEditors: kay
  */
 
@@ -17,7 +17,7 @@ const privateKey = "PVT_SM2_2LnHnaPp9Ktfhiqe9HtuZNP7Nm5ZAKHWGTLnsMq8g2fApC67D5";
 const signatureProvider = new JsSignatureProvider([privateKey]);
 const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() });
 
-describe('ICFS Client', function (){
+describe('Block chain test', function (){
   var newAccountName = '';
   // 生成一个12位的随机账户名
   var characters = 'abcdefghijklmnopqrstuvwxyz12345';

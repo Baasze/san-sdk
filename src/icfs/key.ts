@@ -2,11 +2,11 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-19 16:11:28
- * @LastEditTime: 2020-06-23 18:27:23
+ * @LastEditTime: 2020-08-27 17:54:18
  * @LastEditors: kay
  */ 
 
-import toCamel from './utils/to-camel'
+import toCamel from '../utils/to-camel'
 
 export async function gen(client: any, name: string){
   const res = await (await client.fetch(`/api/v0/key/gen?arg=${name}`)).json()

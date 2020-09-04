@@ -2,11 +2,11 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-22 10:00:44
- * @LastEditTime: 2020-07-07 22:49:12
+ * @LastEditTime: 2020-08-28 09:18:05
  * @LastEditors: kay
  */ 
-const Block = require('./base/ipld-block/index')
-const CID = require('./base/cids/src/index')
+const Block = require('../../src/base/ipld-block/index')
+const CID = require('../../src/base/cids/src/index')
 const Buffer = require('buffer').Buffer
 
 export async function get(client: any, cid: string) {

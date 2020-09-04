@@ -2,11 +2,11 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-22 17:47:47
- * @LastEditTime: 2020-07-24 13:36:23
+ * @LastEditTime: 2020-08-27 17:54:30
  * @LastEditors: kay
  */
 
-import toCamel from './utils/to-camel'
+import toCamel from '../utils/to-camel'
 // import toIterable = require ('./utils/iterator')
 // const ndjson = require('iterable-ndjson')
 

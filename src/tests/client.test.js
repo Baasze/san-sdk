@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-02 10:39:18
- * @LastEditTime: 2020-08-27 08:37:30
+ * @LastEditTime: 2020-09-04 13:50:25
  * @LastEditors: kay
  */
 
@@ -14,8 +14,10 @@ const pipe = require('it-pipe')
 const { map } = require('streaming-iterables')
 const toIterable = require('stream-to-it')
 
+var icfsEndpoint = 'http://xxx.xxx.xxx:5001'
 describe('ICFS Client', function(){
-  var client = new IcfsClient('http://icfs.baasze.com:5001', { fetch })
+  var client = new IcfsClient(icfsEndpoint, { fetch })
+  var date = new Date()
   // icfs add
   it('add test', async function () {
     // 只上传文件内容
@@ -55,16 +57,16 @@ describe('ICFS Client', function(){
     console.log('dirCid: ', dirCid)
     
     // 上传 url
-    var urlCid = await client.addUrl('http://san.baasze.com/doc-md/sdk/javascript/crypto.html#sm2')
+    var urlCid = await client.addUrl('https://github.com/Baasze/san-sdk/blob/master/CHANGELOG.md')
     console.log('urlCid: ', urlCid)
   }, 30000)
 
   // cat file
   it('cat file test', async function(){
     // cat 返回的是 Buffer
-    var fileCid = 'bafk43jqbealhgo5gojbtmxho44abq5fznrul722d4id36sirdpcnzceavivfw'
+    var cid = await client.add(date.toISOString())
     // console.log(fileCid)
-    const res = await client.cat(fileCid)
+    var res = await client.cat(cid)
     console.log('cat: ', res.toString())
   }, 30000)
   
@@ -89,7 +91,7 @@ describe('ICFS Client', function(){
     }
 
     // return {path: cid, content: BufferList}
-    var fileCid = 'bafk43jqbeclzwhefsazzgyyjvch2osvxxg5h42ftwg66hhyx2r2qbkwgzy5ue'
+    var fileCid = 'bafym3jqbedssggxrx6t5mfdyiqauxkmknpjkn35u5kgen56dagazblllin6f2'
     var res = await client.get(fileCid)
     console.log(res)
 
@@ -97,20 +99,19 @@ describe('ICFS Client', function(){
 
   // icfs ls test
   it('ls files test', async function () {
-    var res = await client.ls("bafym3jqbedlgf7pqw6ednj4spj4yv2tgmqoeiwjfkr726gbj4tzssvn3rqqk4")
+    var res = await client.ls("bafym3jqbedssggxrx6t5mfdyiqauxkmknpjkn35u5kgen56dagazblllin6f2")
     console.log('ls: ', res)
   }, 30000)
 
   // icfs pin test
   it('pin test', async function () {
     // pin add
-    var date = new Date()
     var fileCid = await client.add(date.toISOString())
     var res = await client.pinAdd(fileCid)
     console.log('pin add: ', res)
  
     // pin ls
-    res = await client.pinLs([fileCid, 'bafk43jqbed6spvsvlfe7adazqq5ohzzmbri6q7uailvcmyjqca4tkcakegiew'])
+    res = await client.pinLs(fileCid)
     console.log("pin ls: ", res)
    
     // pin rm
@@ -191,7 +192,8 @@ describe('ICFS Client', function(){
   // icfs block test
   it('block test', async function () {
     // block get
-    var res = await client.blockGet('bafym3jqbedlgf7pqw6ednj4spj4yv2tgmqoeiwjfkr726gbj4tzssvn3rqqk4')
+    var cid = await client.add(date.toISOString())
+    var res = await client.blockGet(cid)
     console.log('block get: ', res);
   }, 30000)
   
@@ -209,7 +211,9 @@ describe('ICFS Client', function(){
       keyName = 'mykey'
       await client.keyGen(keyName)
     }
-    var res = await client.namePublish('bafym3jqbedlgf7pqw6ednj4spj4yv2tgmqoeiwjfkr726gbj4tzssvn3rqqk4', keyName)
+    var cid = await client.add(date.toISOString())
+    var res = await client.namePublish(cid, keyName)
+    var name = res.name
     console.log('name publish: ', res)
 
     // name pubsub state
@@ -221,10 +225,10 @@ describe('ICFS Client', function(){
     console.log('name pubsub subs: ', res)
     
     // name pubsub cancel
-    var name = 'bafzm3jqbea4ghtxynopvpr4nfdub3oy4fqcoz7wg5w3qln7fntbcx3kip5dky'
+    // var name = 'bafzm3jqbea4ghtxynopvpr4nfdub3oy4fqcoz7wg5w3qln7fntbcx3kip5dky'
     res = await client.namePubsubCancel(name)
     console.log('name pubsub cancel: ', res)
-  }, 30000)
+  }, 300000)
 
   it('bootstrap test', async function () {
     // bootstrap list
@@ -232,11 +236,11 @@ describe('ICFS Client', function(){
     console.log('bootstrap list: ', res)
 
     // bootstrap add
-    res = await client.bootstrapAdd('/dns4/icfs.baasze.com/tcp/4001/p2p/bafzm3jqbec7ulhfmm7s7ydt2mf32nbsjy4237mvzj5skzbkxrfxz7axghsyum')
+    res = await client.bootstrapAdd('/dns4/xxx.xxx.xxx/tcp/4001/p2p/bafzm3jqbec7ulhfmm7s7ydt2mf32nbsjy4237mvzj5skzbkxrfxz7axghsyum')
     console.log('bootstrap add:', res)
     
     // bootstrap rm
-    res = await client.bootstrapRm('/dns4/icfs.baasze.com/tcp/4001/p2p/bafzm3jqbec7ulhfmm7s7ydt2mf32nbsjy4237mvzj5skzbkxrfxz7axghsyum')
+    res = await client.bootstrapRm('/dns4/xxx.xxx.xxx/tcp/4001/p2p/bafzm3jqbec7ulhfmm7s7ydt2mf32nbsjy4237mvzj5skzbkxrfxz7axghsyum')
     console.log('bootstrap rm:', res)
   }, 30000)
   

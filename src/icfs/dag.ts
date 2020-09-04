@@ -2,15 +2,15 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-22 09:55:59
- * @LastEditTime: 2020-07-07 22:44:45
+ * @LastEditTime: 2020-08-28 09:19:31
  * @LastEditors: kay
  */
 
-import multipartRequest from "./multipart-request"
-const CID = require('../icfs/base/cids/src/index.js')
-const dagCBOR = require('./base/ipld-dag-cbor/src/index')
+import multipartRequest from "../utils/multipart-request"
+const CID = require('../../src/base/cids/src/index.js')
+const dagCBOR = require('../../src/base/ipld-dag-cbor/src/index')
 // const dagPB = require('ipld-dag-pb')
-const raw = require('./base/ipld-raw/src/index')
+const raw = require('../../src/base/ipld-raw/src/index')
 const resolvers: any = {
   'dag-cbor': dagCBOR.resolver,
   // 'dag-pb': dagPB.resolver,

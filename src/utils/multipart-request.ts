@@ -1,10 +1,10 @@
 'use strict'
 
-const normaliseInput = require('./utils/files/normalise-input')
+const normaliseInput = require('../../src/base/normalise-input')
 const { Readable } = require('readable-stream-miniprogram')
 const {Buffer} = require('buffer')
-import modeToString from './utils/mode-to-string'
-import mtimeToObject from './utils/mtime-to-object'
+import modeToString from './mode-to-string'
+import mtimeToObject from './mtime-to-object'
 const merge = require('merge-options').bind({ ignoreUndefined: true })
 
 async function multipartRequest(source: any, abortController: any, headers = {}, boundary = `-----------------------------${Math.random() * 100000}.${Math.random() * 100000}`) {

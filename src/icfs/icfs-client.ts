@@ -2,17 +2,18 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-01 10:45:26
- * @LastEditTime: 2020-07-24 11:44:01
+ * @LastEditTime: 2020-09-03 17:06:07
  * @LastEditors: kay
  */
 
-import toIterable = require('./utils/iterator')
+import toIterable = require('../utils/iterator')
 import * as Interface from './san-api-interface'
 
 export class IcfsClient {
   public endpoint: string;
   public fetchBuiltin:
-      (input?: Request|string, init?: any) => Promise<any>;
+    (input?: Request | string, init?: any) => Promise<any>;
+  public headerOrigin: string;
   constructor(
       endpoint: string,
       args: {
@@ -20,6 +21,10 @@ export class IcfsClient {
                  init?: RequestInit) => Promise<any>
       } = {},
   ) {
+    if (typeof process != 'object') {
+      this.headerOrigin = 'mini-program'
+    }
+    
     this.endpoint = endpoint.replace(/\/$/, '');
     if (args.fetch) {
       this.fetchBuiltin = args.fetch;
@@ -41,8 +46,12 @@ export class IcfsClient {
       if (options.disableEndpoint) {
         url = path
       }
+      var headers = options.headers ? options.headers : {}
+      if (this.headerOrigin != undefined) {
+        headers['Origin'] = this.headerOrigin
+      }
       response = await f(url, {
-        headers: options.headers ? options.headers : {},
+        headers: headers,
         body: options.body,
         method: options.method ? options.method : 'POST',
         dataType: options.dataType ? options.dataType : 'text',

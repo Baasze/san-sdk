@@ -2,11 +2,11 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-07-03 11:18:46
- * @LastEditTime: 2020-07-07 09:45:07
+ * @LastEditTime: 2020-08-27 17:51:34
  * @LastEditors: kay
  */ 
 
-import toIterable = require('./utils/iterator')
+import toIterable = require('../utils/iterator')
 const { Buffer } = require('buffer')
 
 export async function cat(client: any, cid: string) {
