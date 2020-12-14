@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.2] - 2020-12-14
+
+- fix can not dag put key value is null
+
 ## [0.4.1] - 2020-09-17
 
 - fix Crypto.sm2 mismatch SM2 encryption standard

@@ -2,7 +2,7 @@
  * @Description: 
  * @Author: kay
  * @Date: 2020-06-22 09:55:59
- * @LastEditTime: 2020-08-28 09:19:31
+ * @LastEditTime: 2020-12-14 11:20:36
  * @LastEditors: kay
  */
 
@@ -38,7 +38,7 @@ export async function put(client: any, input: any, options?: {format?: string, h
   } else {
     serialize = input
   }
-  
+
   const res = await client.fetch(`/api/v0/dag/put?format=${options.format}&input-enc=${options.inputEnc}&hash=${options.hashAlg}`, {
     ...(
       await multipartRequest(serialize, null)
@@ -80,7 +80,7 @@ function convertToCborIshObj(input: any) :any {
       out.push(res.obj)
     }
     return { 'obj': out, 'error': null} 
-  } else if (typeof input === 'object') {
+  } else if (input != null && typeof input === 'object') {
     if (Object.keys(input).length == 0) {
       return { 'obj': input, 'error': null}
     }
@@ -94,7 +94,7 @@ function convertToCborIshObj(input: any) :any {
       return { 'obj': new CID(value), 'error': null}
     }
 
-    for(let key in input){
+    for (let key in input) {
       var res = convertToCborIshObj(input[key])
       if (res.error != null) {
         return res
