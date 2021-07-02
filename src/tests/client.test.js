@@ -18,6 +18,25 @@ var icfsEndpoint = 'http://xxx.xxx.xxx:5001'
 describe('ICFS Client', function(){
   var client = new IcfsClient(icfsEndpoint, { fetch })
   var date = new Date()
+
+  it('repo test', async function () {
+    // pin add
+    var fileCid = await client.add(date.toISOString())
+    var res = await client.pinAdd(fileCid)
+    console.log('pin add: ', res)
+ 
+    // pin ls
+    res = await client.pinLs(fileCid)
+    console.log("pin ls: ", res)
+   
+    // pin rm
+    res = await client.pinRm(fileCid)
+    console.log('pin rm: ', res)
+
+    res = await client.repoGc()
+    console.log('repoGc: ', res)
+  }, 30000)
+
   // icfs add
   it('add test', async function () {
     // 只上传文件内容
@@ -187,6 +206,11 @@ describe('ICFS Client', function(){
     // dag get links cid of obj
     res = await client.dagGet(cid, 'c/cb')
     console.log('dag get "obj": ', res)
+
+    // dag get links cid of obj
+    res = await client.dagResolve(cid)
+    console.log('dag dagResolve "obj": ', res)
+    
   }, 30000)
 
   // icfs block test

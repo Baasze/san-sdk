@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.3] - 2021-07-02
+
+- add icfs repo gc
+
 ## [0.4.2] - 2020-12-14
 
 - fix can not dag put key value is null

@@ -73,6 +73,11 @@ export class IcfsClient {
     return (await import('./cat')).cat(this, cid)
   }
 
+  // repo
+  public async repoGc(cid: string): Promise<Buffer[]> {
+    return (await import('./repo')).gc(this)
+  }
+
   // add
   public async add(input: Uint8Array | string | { path: string, content: Buffer } | { path: string, content: Buffer }[] | AsyncGenerator<{ path: string; content: any; }, void, unknown>, directory?: string): Promise<Interface.addResult> {
     if (typeof input === 'object' && directory === undefined) {
