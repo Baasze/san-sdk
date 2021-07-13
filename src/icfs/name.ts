@@ -10,10 +10,13 @@ import toCamel from '../utils/to-camel'
 // import toIterable = require ('./utils/iterator')
 // const ndjson = require('iterable-ndjson')
 
-export async function publish(client: any, path: string, options?: { key: string }) {
+export async function publish(client: any, path: string, options?: { key: string }, lifetime?: string) {
   let url = `/api/v0/name/publish?arg=${path}`
   if (options.key) {
     url = url + `&key=${options.key}`
+  }
+  if (lifetime) {
+    url = url + `&lifetime=${lifetime}`
   }
   const res = await client.fetch(url)
   return toCamel(await res.json())

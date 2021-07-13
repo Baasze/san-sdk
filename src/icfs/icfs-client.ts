@@ -201,8 +201,8 @@ export class IcfsClient {
   }
 
   // name
-  public async namePublish(path: string, key?: string): Promise<Interface.namePublishResult>{
-    return (await import('./name')).publish(this, path, {key: key})
+  public async namePublish(path: string, key?: string, lifetime?: string): Promise<Interface.namePublishResult>{
+    return (await import('./name')).publish(this, path, {key: key}, lifetime)
   }
 
   // public async nameResolve(path: string): Promise<{ Path: string }[]> {

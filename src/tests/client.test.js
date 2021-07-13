@@ -236,7 +236,8 @@ describe('ICFS Client', function(){
       await client.keyGen(keyName)
     }
     var cid = await client.add(date.toISOString())
-    var res = await client.namePublish(cid, keyName)
+    var lifetime = "300s"
+    var res = await client.namePublish(cid, keyName, lifetime)
     var name = res.name
     console.log('name publish: ', res)
 
