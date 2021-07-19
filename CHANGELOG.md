@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.4] - 2021-07-19
+
+- add icfs name publish timeout
 ## [0.4.3] - 2021-07-02
 
 - add icfs repo gc
